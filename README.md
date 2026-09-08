@@ -8,7 +8,7 @@ running process.
 fonts/         the shipped files, byte-identical to upstream
 LICENSES/      the licence text of every upstream family
 THIRD_PARTY/   the provenance manifest for every file
-src/           the library that marks a family name at load time
+src/           the library that marks a family name at load time (needs Qt)
 vnm_fonts.qrc  the resource that carries the ten files into a process
 tests/         the gates
 ```
@@ -41,7 +41,26 @@ either. The library carries a family override for that case.
 **So: do not "simplify" this by registering the files as they are.** The
 verbatim bytes are exactly the failure above. The marking is the point.
 
-## How a consumer uses it
+## Two contracts, and only one needs Qt
+
+| Contract | What it gives you | Needs Qt |
+|---|---|---|
+| File | `VNM_FONTS_DIRECTORY`, the manifest, the licences | no |
+| Library | `vnm::fonts`, which registers a font under a marked family | yes |
+
+`find_package(Qt6 ...)` here is **QUIET, not REQUIRED**, so adding this
+repository to a project on a machine with no Qt configures normally: you get
+the file contract, and `vnm::fonts` is simply not defined. A consumer that
+links `vnm::fonts` anyway fails on its own `target_link_libraries` line naming
+that target, with the explanation directly above it in the configure log —
+rather than failing inside a repository it only wanted a file path from.
+`VNM_FONTS_LIBRARY_AVAILABLE` says which contract you have.
+
+Do not restore `REQUIRED`. `vnm_msdf_text` and `vnm_plot` configure on Linux,
+macOS, FreeBSD and Windows with no Qt installed, and `REQUIRED` breaks every one
+of those jobs. The `vnm_fonts_without_qt` gate fails if anyone tries.
+
+## How a Qt consumer uses it
 
 The library carries all ten fonts in a Qt resource under `:/vnm_fonts/`, so a
 consumer links it and has them. Ask for a font by id and use the family that
@@ -80,8 +99,13 @@ files through the `VNM_FONTS_DIRECTORY` cache variable, which is a supported
 path and not an accident:
 
 ```cmake
+add_subdirectory(vnm_fonts)   # or FetchContent; no Qt needed
 target_compile_definitions(my_atlas PRIVATE VNM_FONTS_DIR="${VNM_FONTS_DIRECTORY}")
 ```
+
+That works in a configure with no Qt present at all, which is the point: a
+file-only consumer takes the repository as an ordinary subproject and does not
+have to populate the checkout without configuring it.
 
 Do not "fix" that later by routing those two through the patcher.
 
@@ -90,9 +114,10 @@ Do not "fix" that later by routing those two through the patcher.
 logonomic reaches this repository through several dependency paths in one
 configure — the framework, the terminal, the terminal surface, the plot, the
 MSDF text renderer and the keyboard. Adding it twice is ordinary: the CMake
-returns early when its target already exists, and it never `FORCE`s
-`VNM_FONTS_DIRECTORY`, so a consumer that set that variable itself keeps its
-value. `tests/repeated_inclusion` is the gate on both.
+returns early on a global property — not on the library target, which does not
+exist in a Qt-free configure — and it never `FORCE`s `VNM_FONTS_DIRECTORY`, so a
+consumer that set that variable itself keeps its value.
+`tests/repeated_inclusion` is the gate on both.
 
 ## What the marking does
 
@@ -156,8 +181,10 @@ ctest --test-dir <build>               # all four
 | `vnm_font_namespace` | Marking changes only the `name` table; each font registers under one marked family that the database resolves to itself and that appears exactly once; the Roboto pair is one family, the Font Awesome 7 Free pair is two. |
 | `vnm_fonts_consumer` | The resource is reachable from a target that merely links the library; all ten register by id into nine families; a second registration returns the first. |
 | `vnm_fonts_repeated_inclusion` | Adding this repository twice configures, and `VNM_FONTS_DIRECTORY` is not overwritten. |
+| `vnm_fonts_without_qt` | The file contract survives a configure with Qt disabled: it succeeds, `VNM_FONTS_DIRECTORY` points at the shipped set, the manifest test is registered and passes, and no Qt-dependent test is registered. |
 | `vnm_fonts_manifest` | Every shipped file matches its recorded digest and size, every file is described by exactly one record, and the notices cover every revision, URL and licence. |
 
-`tests/test_font_manifest.py` needs Python 3.11 or later for `tomllib`, or
-`tomli` on an older one. The C++ gates need Qt 6 and run under the offscreen
-platform.
+`vnm_fonts_manifest` is the only gate a Qt-free configure registers, and it is
+the whole of what a file-only consumer relies on. It needs Python 3.11 or later
+for `tomllib`, or `tomli` on an older one. The other four need Qt 6; the two
+C++ ones run under the offscreen platform.

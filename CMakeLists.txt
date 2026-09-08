@@ -3,39 +3,67 @@ cmake_minimum_required(VERSION 3.21)
 # logonomic reaches this repository through several dependency paths in one
 # configure - the framework, the terminal, the terminal surface, the plot, the
 # MSDF text renderer and the keyboard all want it - so being added twice is
-# ordinary, not a mistake. Return quietly on the second pass rather than
-# redefining the targets.
-if(TARGET vnm_fonts)
+# ordinary, not a mistake. Return quietly on the second pass. The guard is a
+# global property rather than a target check, because the library target does
+# not exist in a Qt-free configure and there would be nothing to test.
+get_property(vnm_fonts_already_included GLOBAL PROPERTY VNM_FONTS_INCLUDED)
+if(vnm_fonts_already_included)
     return()
 endif()
+set_property(GLOBAL PROPERTY VNM_FONTS_INCLUDED TRUE)
 
 project(vnm_fonts LANGUAGES CXX)
 
-# The library patches a font's family name on the way into QFontDatabase, so it
-# needs Qt Gui for the font database and Qt Core for everything else. It must
-# not grow a third dependency: consumers pull it in purely to register fonts.
-find_package(Qt6 REQUIRED COMPONENTS Core Gui)
-
-add_library(vnm_fonts STATIC
-    src/vnm_font_namespace.cpp
-    src/vnm_font_namespace.h
-    vnm_fonts.qrc)
-
-set_target_properties(vnm_fonts PROPERTIES AUTORCC ON)
-
-target_include_directories(vnm_fonts PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(vnm_fonts PUBLIC Qt6::Core Qt6::Gui)
-target_compile_features(vnm_fonts PUBLIC cxx_std_17)
-
-add_library(vnm::fonts ALIAS vnm_fonts)
+# This repository serves two contracts, and only one of them needs Qt.
+#
+#   The file contract:  VNM_FONTS_DIRECTORY, the manifest and the licences.
+#                       vnm_msdf_text and vnm_plot bake a glyph atlas straight
+#                       from the file bytes and never enter Qt's font database,
+#                       and their CI configures on four platforms with no Qt
+#                       installed at all.
+#   The library contract: vnm::fonts, which registers a font under a marked
+#                       family name and therefore needs QFontDatabase.
+#
+# Qt is looked for quietly so the file contract stays usable without it. Making
+# this REQUIRED breaks every Qt-free consumer's configure, which is why
+# tests/without_qt exists: restoring REQUIRED fails a gate here rather than a
+# CI job on a machine none of us has.
+find_package(Qt6 QUIET COMPONENTS Core Gui)
 
 # The supported path for a consumer that needs the file rather than the bytes.
-# vnm_msdf_text and vnm_plot bake an atlas straight from the file and never
-# enter Qt's font database, so nothing about them can merge and no marking
-# applies; they read the verbatim files from here. Never FORCE this: a consumer
-# that has already set it means it.
+# Set before the Qt branch, because it is exactly what a Qt-free consumer came
+# for. Never FORCE it: a consumer that has already set it means it.
 set(VNM_FONTS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fonts
     CACHE PATH "Directory holding the byte-verbatim shipped font files")
+
+if(Qt6_FOUND)
+    add_library(vnm_fonts STATIC
+        src/vnm_font_namespace.cpp
+        src/vnm_font_namespace.h
+        vnm_fonts.qrc)
+
+    set_target_properties(vnm_fonts PROPERTIES AUTORCC ON)
+
+    target_include_directories(vnm_fonts PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_link_libraries(vnm_fonts PUBLIC Qt6::Core Qt6::Gui)
+    target_compile_features(vnm_fonts PUBLIC cxx_std_17)
+
+    add_library(vnm::fonts ALIAS vnm_fonts)
+else()
+    # Configuring succeeds; only the library contract is withheld. A consumer
+    # that links vnm::fonts now fails on that line naming the missing target,
+    # with this line directly above it in the configure log saying why - rather
+    # than failing inside a repository it only wanted a file path from.
+    message(STATUS
+        "vnm_fonts: Qt6 Core and Gui were not found, so the vnm::fonts library "
+        "is not defined. VNM_FONTS_DIRECTORY (${VNM_FONTS_DIRECTORY}) and the "
+        "manifest are available as usual; link vnm::fonts only where Qt is "
+        "present.")
+endif()
+
+# Lets a consumer branch on which contract it has, instead of testing Qt6_FOUND
+# itself and guessing what this repository did with it.
+set(VNM_FONTS_LIBRARY_AVAILABLE ${Qt6_FOUND})
 
 # A consumed copy builds no tests unless the consumer asks for them.
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
@@ -48,6 +76,18 @@ option(VNM_FONTS_BUILD_TESTS "Build the vnm_fonts tests" ${vnm_fonts_tests_by_de
 if(VNM_FONTS_BUILD_TESTS)
     enable_testing()
 
+    # The file contract is testable without Qt, and must stay that way: it is
+    # the whole of what a Qt-free consumer relies on.
+    find_package(Python3 COMPONENTS Interpreter)
+    if(Python3_FOUND)
+        add_test(
+            NAME vnm_fonts_manifest
+            COMMAND ${Python3_EXECUTABLE}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_font_manifest.py)
+    endif()
+endif()
+
+if(VNM_FONTS_BUILD_TESTS AND Qt6_FOUND)
     # Registering a font needs a platform plugin but no display.
     set(vnm_fonts_test_environment "QT_QPA_PLATFORM=offscreen")
 
@@ -68,9 +108,9 @@ if(VNM_FONTS_BUILD_TESTS)
     set_tests_properties(vnm_fonts_consumer PROPERTIES
         ENVIRONMENT "${vnm_fonts_test_environment}")
 
-    # Proves the guard above: a project that adds this repository twice still
-    # configures. It runs configure only, which is what it is testing, so the
-    # compiler is forwarded and its check is reduced to a compile - a link
+    # Proves the inclusion guard: a project that adds this repository twice
+    # still configures. It runs configure only, which is what it is testing, so
+    # the compiler is forwarded and its check is reduced to a compile - a link
     # would need a toolchain environment the caller of ctest may not have.
     add_test(
         NAME vnm_fonts_repeated_inclusion
@@ -84,11 +124,17 @@ if(VNM_FONTS_BUILD_TESTS)
                 -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
                 -DVNM_FONTS_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR})
 
-    find_package(Python3 COMPONENTS Interpreter)
-    if(Python3_FOUND)
-        add_test(
-            NAME vnm_fonts_manifest
-            COMMAND ${Python3_EXECUTABLE}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_font_manifest.py)
-    endif()
+    # Proves the file contract survives with no Qt. Registered only in a
+    # Qt-capable configure, so the Qt-free configure it drives registers just
+    # the manifest test and cannot recurse into this one.
+    add_test(
+        NAME vnm_fonts_without_qt
+        COMMAND ${CMAKE_COMMAND}
+                -DVNM_FONTS_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+                -DVNM_FONTS_BUILD_ROOT=${CMAKE_CURRENT_BINARY_DIR}/without_qt
+                -DVNM_FONTS_GENERATOR=${CMAKE_GENERATOR}
+                -DVNM_FONTS_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+                -DVNM_FONTS_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                -DVNM_FONTS_CTEST=${CMAKE_CTEST_COMMAND}
+                -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/configure_without_qt.cmake)
 endif()
