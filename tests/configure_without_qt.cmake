@@ -68,11 +68,14 @@ execute_process(
 if(NOT listing_result EQUAL 0)
     message(FATAL_ERROR "Listing the Qt-free tests failed.\n${listing_output}")
 endif()
-if(NOT listing_output MATCHES "vnm_fonts_manifest")
-    message(FATAL_ERROR
-        "A Qt-free configure did not register vnm_fonts_manifest, which is the "
-        "whole of what a file-only consumer can check.\n${listing_output}")
-endif()
+foreach(file_contract_test vnm_fonts_manifest vnm_fonts_installed_licenses)
+    if(NOT listing_output MATCHES "${file_contract_test}")
+        message(FATAL_ERROR
+            "A Qt-free configure did not register ${file_contract_test}. A "
+            "file-only consumer redistributes the fonts too, so the manifest and "
+            "the licence install are what it must be able to check.\n${listing_output}")
+    endif()
+endforeach()
 foreach(qt_test vnm_font_namespace vnm_fonts_consumer)
     if(listing_output MATCHES "${qt_test}")
         message(FATAL_ERROR
@@ -80,15 +83,17 @@ foreach(qt_test vnm_font_namespace vnm_fonts_consumer)
     endif()
 endforeach()
 
-# And the manifest test actually passes there, rather than merely existing.
+# And they pass there, rather than merely existing. The licence install in
+# particular has to work without Qt: the obligation follows the font bytes, not
+# the font database. Every test a Qt-free configure registers is a file-contract
+# test, so running all of them is the check.
 execute_process(
-    COMMAND ${VNM_FONTS_CTEST} --test-dir ${VNM_FONTS_BUILD_ROOT} -R vnm_fonts_manifest
-            --output-on-failure
-    RESULT_VARIABLE manifest_result
-    OUTPUT_VARIABLE manifest_output
-    ERROR_VARIABLE  manifest_output)
-if(NOT manifest_result EQUAL 0)
-    message(FATAL_ERROR "The manifest test failed without Qt.\n${manifest_output}")
+    COMMAND ${VNM_FONTS_CTEST} --test-dir ${VNM_FONTS_BUILD_ROOT} --output-on-failure
+    RESULT_VARIABLE file_contract_result
+    OUTPUT_VARIABLE file_contract_output
+    ERROR_VARIABLE  file_contract_output)
+if(NOT file_contract_result EQUAL 0)
+    message(FATAL_ERROR "The file-contract tests failed without Qt.\n${file_contract_output}")
 endif()
 
-message(STATUS "The file contract configures and checks with no Qt present.")
+message(STATUS "The file contract configures, installs and checks with no Qt present.")

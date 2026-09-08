@@ -71,6 +71,53 @@ endif()
 # itself and guessing what this repository did with it.
 set(VNM_FONTS_LIBRARY_AVAILABLE ${Qt6_FOUND})
 
+# Redistributing these fonts means redistributing their licences: all ten are
+# OFL-1.1, Apache-2.0 or the Ubuntu Font Licence, and each requires the licence
+# and copyright notice to accompany every copy. The obligation travelled here
+# with the fonts, so the install rules do too, and they sit outside the Qt
+# branch because a file-only consumer redistributes the bytes just as much as a
+# Qt one does.
+include(GNUInstallDirs)
+
+# Spelled from DATAROOTDIR rather than taken from CMAKE_INSTALL_DOCDIR, which
+# GNUInstallDirs derives from whichever project happened to include it first -
+# the consumer's name, when this repository is a subproject.
+set(VNM_FONTS_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/vnm_fonts
+    CACHE INTERNAL "Install destination of the font licences and notices")
+
+# A consumer whose package is built from named CPack components must put these
+# files in one of them: CPACK_COMPONENTS_ALL drops everything else, silently.
+# vnm_terminal, for one, packages only vnm_terminal_runtime.
+set(VNM_FONTS_INSTALL_COMPONENT "vnm_fonts_licenses"
+    CACHE STRING "CPack component the font licences and notices install into")
+
+set(VNM_FONTS_LICENSES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/LICENSES
+    CACHE INTERNAL "Source directory of the upstream licence texts")
+set(VNM_FONTS_NOTICES_FILE ${CMAKE_CURRENT_SOURCE_DIR}/THIRD_PARTY_NOTICES.md
+    CACHE INTERNAL "Source path of the third-party notices")
+file(GLOB vnm_fonts_license_files ${CMAKE_CURRENT_SOURCE_DIR}/LICENSES/*.txt)
+set(VNM_FONTS_LICENSE_FILES ${vnm_fonts_license_files}
+    CACHE INTERNAL "The upstream licence texts, for a packaging step that copies them itself")
+
+install(FILES ${VNM_FONTS_LICENSE_FILES} ${VNM_FONTS_NOTICES_FILE}
+    DESTINATION ${VNM_FONTS_INSTALL_DOCDIR}
+    COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+
+# add_subdirectory(... EXCLUDE_FROM_ALL) discards a subdirectory's install rules
+# outright - measured on CMake 3.30 - and FetchContent passes that form when its
+# declaration asks for it. The consumer then ships the fonts and none of their
+# licences, with nothing to show that anything was dropped. Say so rather than
+# let it pass, and name the variables that let them copy the texts themselves.
+get_directory_property(vnm_fonts_directory_excluded EXCLUDE_FROM_ALL)
+if(vnm_fonts_directory_excluded)
+    message(WARNING
+        "vnm_fonts was added with EXCLUDE_FROM_ALL, which discards its install "
+        "rules, so the font licences and THIRD_PARTY_NOTICES.md will not reach "
+        "your install tree. Redistributing these fonts requires them. Drop "
+        "EXCLUDE_FROM_ALL, or install VNM_FONTS_LICENSE_FILES and "
+        "VNM_FONTS_NOTICES_FILE yourself.")
+endif()
+
 # A consumed copy builds no tests unless the consumer asks for them.
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(vnm_fonts_tests_by_default ON)
@@ -90,6 +137,20 @@ if(VNM_FONTS_BUILD_TESTS)
             NAME vnm_fonts_manifest
             COMMAND ${Python3_EXECUTABLE}
                     ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_font_manifest.py)
+
+        # Redistributing the fonts without their licences is the failure this
+        # catches, and it is what the consumer repositories were left doing when
+        # the fonts moved here and their own install rules went away. Registered
+        # beside the manifest test rather than with the Qt ones, because a
+        # file-only consumer redistributes the bytes too.
+        add_test(
+            NAME vnm_fonts_installed_licenses
+            COMMAND ${Python3_EXECUTABLE}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_installed_licenses.py
+                    --cmake ${CMAKE_COMMAND}
+                    --build-dir ${CMAKE_BINARY_DIR}
+                    --prefix ${CMAKE_CURRENT_BINARY_DIR}/install_staging
+                    --docdir ${VNM_FONTS_INSTALL_DOCDIR})
     endif()
 endif()
 

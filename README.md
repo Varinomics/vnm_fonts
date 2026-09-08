@@ -117,6 +117,38 @@ its own objects and nothing of this repository's.
 
 Do not "fix" that later by routing those two through the patcher.
 
+### Redistributing the fonts means redistributing the licences
+
+All ten faces are OFL-1.1, Apache-2.0 or the Ubuntu Font Licence, and every one
+of those requires the licence and copyright notice to accompany copies. This
+repository installs them, so a consumer that installs gets them:
+
+```
+share/doc/vnm_fonts/*.txt                  the seven upstream licence texts
+share/doc/vnm_fonts/THIRD_PARTY_NOTICES.md what points a reader at them
+```
+
+The rules are outside the Qt branch, because a file-only consumer redistributes
+the bytes just as much as a Qt one does.
+
+Two things a consumer may have to do:
+
+- **Packaging from named CPack components.** `CPACK_COMPONENTS_ALL` silently
+  drops every component not listed, so set `VNM_FONTS_INSTALL_COMPONENT` to your
+  own runtime component — `vnm_terminal`, for one, packages only
+  `vnm_terminal_runtime`. The default is `vnm_fonts_licenses`.
+- **Packaging that copies files itself** rather than running `cmake --install`.
+  `VNM_FONTS_LICENSE_FILES`, `VNM_FONTS_NOTICES_FILE` and
+  `VNM_FONTS_LICENSES_DIR` name the sources; `VNM_FONTS_INSTALL_DOCDIR` names
+  the destination this repository uses.
+
+**Do not add this repository with `add_subdirectory(... EXCLUDE_FROM_ALL)`.**
+That form discards a subdirectory's install rules outright — measured on CMake
+3.30 — so the fonts ship and the licences do not, with nothing in the output to
+say anything was dropped. The configure warns if you do it anyway. This is
+unrelated to the `EXCLUDE_FROM_ALL` on the library *target*, which is a
+different property and affects no install rule.
+
 ### Being included more than once
 
 logonomic reaches this repository through several dependency paths in one
@@ -192,8 +224,10 @@ ctest --test-dir <build>               # all four
 | `vnm_fonts_file_only_consumer` | A project that adds this repository and links nothing from it builds neither the library nor its resource — the library target stays `EXCLUDE_FROM_ALL`. |
 | `vnm_fonts_without_qt` | The file contract survives a configure with Qt disabled: it succeeds, `VNM_FONTS_DIRECTORY` points at the shipped set, the manifest test is registered and passes, and no Qt-dependent test is registered. |
 | `vnm_fonts_manifest` | Every shipped file matches its recorded digest and size, every file is described by exactly one record, and the notices cover every revision, URL and licence. |
+| `vnm_fonts_installed_licenses` | `cmake --install` puts every licence text the manifests name into `share/doc/vnm_fonts/` with its recorded digest, along with the notices. |
 
-`vnm_fonts_manifest` is the only gate a Qt-free configure registers, and it is
-the whole of what a file-only consumer relies on. It needs Python 3.11 or later
-for `tomllib`, or `tomli` on an older one. The other four need Qt 6; the two
-C++ ones run under the offscreen platform.
+`vnm_fonts_manifest` and `vnm_fonts_installed_licenses` are the two a Qt-free
+configure registers, and together they are the whole of what a file-only
+consumer relies on. They need Python 3.11 or later for `tomllib`, or `tomli` on
+an older one. The other four need Qt 6; the two C++ ones run under the offscreen
+platform.
