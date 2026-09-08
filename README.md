@@ -107,6 +107,14 @@ That works in a configure with no Qt present at all, which is the point: a
 file-only consumer takes the repository as an ordinary subproject and does not
 have to populate the checkout without configuring it.
 
+It also costs nothing when Qt *is* present. The library target is
+`EXCLUDE_FROM_ALL`, so a consumer that links nothing from it builds neither the
+library nor the generated resource — which is around 29 MB of source, all ten
+fonts embedded, and would otherwise be compiled on every build to be linked by
+nobody. `vnm::fonts` is still built on demand for anything that links it, so Qt
+consumers need no change. Measured: a file-only consumer's build tree contains
+its own objects and nothing of this repository's.
+
 Do not "fix" that later by routing those two through the patcher.
 
 ### Being included more than once
@@ -181,6 +189,7 @@ ctest --test-dir <build>               # all four
 | `vnm_font_namespace` | Marking changes only the `name` table; each font registers under one marked family that the database resolves to itself and that appears exactly once; the Roboto pair is one family, the Font Awesome 7 Free pair is two. |
 | `vnm_fonts_consumer` | The resource is reachable from a target that merely links the library; all ten register by id into nine families; a second registration returns the first. |
 | `vnm_fonts_repeated_inclusion` | Adding this repository twice configures, and `VNM_FONTS_DIRECTORY` is not overwritten. |
+| `vnm_fonts_file_only_consumer` | A project that adds this repository and links nothing from it builds neither the library nor its resource — the library target stays `EXCLUDE_FROM_ALL`. |
 | `vnm_fonts_without_qt` | The file contract survives a configure with Qt disabled: it succeeds, `VNM_FONTS_DIRECTORY` points at the shipped set, the manifest test is registered and passes, and no Qt-dependent test is registered. |
 | `vnm_fonts_manifest` | Every shipped file matches its recorded digest and size, every file is described by exactly one record, and the notices cover every revision, URL and licence. |
 
