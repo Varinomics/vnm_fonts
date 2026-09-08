@@ -1,0 +1,30 @@
+name = "JetBrains Mono"
+spdx_license_expression = "OFL-1.1"
+copyright = "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)"
+reserved_font_name = "none declared; the upstream copyright notice names no Reserved Font Name, so the face is redistributed under its own family name"
+license_text = "LICENSES/JetBrainsMono-OFL-1.1.txt"
+license_text_sha256 = "30f0c136e3c88e422d0791acd97238870f9054a9729bc34cf2ff0d4ed8cac4ad"
+license_text_note = "The local license text is the upstream OFL.txt imported verbatim, so its hash is the upstream license hash. It carries the project copyright statement that the generic LICENSES/OFL-1.1.txt does not."
+compliance_status = "resolved"
+
+upstream_repository = "https://github.com/JetBrains/JetBrainsMono"
+upstream_revision = "cd5227bd1f61dff3bbd6c814ceaf7ffd95e947d9"
+upstream_revision_role = "immutable provenance input; not a forward dependency pin"
+upstream_release = "v2.304"
+upstream_license_path = "OFL.txt"
+upstream_license_url = "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/cd5227bd1f61dff3bbd6c814ceaf7ffd95e947d9/OFL.txt"
+upstream_license_sha256 = "30f0c136e3c88e422d0791acd97238870f9054a9729bc34cf2ff0d4ed8cac4ad"
+
+[[artifact]]
+key = "jetbrains_mono_regular"
+path = "fonts/JetBrainsMono-Regular.ttf"
+embedded_family = "JetBrains Mono"
+embedded_style = "Regular"
+sha256 = "a0bf60ef0f83c5ed4d7a75d45838548b1f6873372dfac88f71804491898d138f"
+size = 273900
+source_path = "fonts/ttf/JetBrainsMono-Regular.ttf"
+source_url = "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/cd5227bd1f61dff3bbd6c814ceaf7ffd95e947d9/fonts/ttf/JetBrainsMono-Regular.ttf"
+source_sha256 = "a0bf60ef0f83c5ed4d7a75d45838548b1f6873372dfac88f71804491898d138f"
+source_size = 273900
+modifications = "none"
+provenance_status = "resolved"

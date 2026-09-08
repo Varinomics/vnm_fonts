@@ -74,6 +74,8 @@ std::vector<Font_case> font_cases()
         {QStringLiteral("NotoSansSymbols2-Regular.ttf"),   QStringLiteral("Noto Sans Symbols 2 (vnm)"),      {}},
         {QStringLiteral("JuliaMono-Regular.ttf"),          QStringLiteral("JuliaMono (vnm)"),                {}},
         {QStringLiteral("ABeeZee-Regular.ttf"),            QStringLiteral("ABeeZee (vnm)"),                  {}},
+        {QStringLiteral("JetBrainsMono-Regular.ttf"),      QStringLiteral("JetBrains Mono (vnm)"),           {}},
+        {QStringLiteral("FiraCode-Regular.ttf"),           QStringLiteral("Fira Code (vnm)"),                {}},
         {QStringLiteral("UbuntuMono-Bront.ttf"),           QStringLiteral("Ubuntu Mono - Bront (vnm)"),      {}},
     };
 }

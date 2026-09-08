@@ -15,5 +15,7 @@
     <file alias="vnm_fonts/JuliaMono-Regular.ttf">fonts/JuliaMono-Regular.ttf</file>
     <file alias="vnm_fonts/ABeeZee-Regular.ttf">fonts/ABeeZee-Regular.ttf</file>
     <file alias="vnm_fonts/UbuntuMono-Bront.ttf">fonts/UbuntuMono-Bront.ttf</file>
+    <file alias="vnm_fonts/JetBrainsMono-Regular.ttf">fonts/JetBrainsMono-Regular.ttf</file>
+    <file alias="vnm_fonts/FiraCode-Regular.ttf">fonts/FiraCode-Regular.ttf</file>
   </qresource>
 </RCC>

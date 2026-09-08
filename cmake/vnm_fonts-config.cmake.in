@@ -1,0 +1,18 @@
+@PACKAGE_INIT@
+
+# vnm::fonts registers a font under a marked family name, which needs the Qt
+# font database. A consumer of the installed package therefore needs the same Qt
+# modules the library was built against.
+include(CMakeFindDependencyMacro)
+find_dependency(Qt6 COMPONENTS Core Gui)
+
+include("${CMAKE_CURRENT_LIST_DIR}/vnm_fonts-targets.cmake")
+
+# The file contract, in the same spelling an in-tree consumer gets. A consumer
+# that bakes an atlas from the font bytes rather than entering the font database
+# reads this; see the repository README for which consumers those are.
+set_and_check(VNM_FONTS_DIRECTORY "@PACKAGE_VNM_FONTS_INSTALL_FONTSDIR@")
+
+set(VNM_FONTS_LIBRARY_AVAILABLE TRUE)
+
+check_required_components(vnm_fonts)

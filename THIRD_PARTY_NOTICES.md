@@ -210,3 +210,35 @@ Source:
 - https://ubuntu.com/legal/font-licence
 
 Details in `THIRD_PARTY/ubuntu_mono_bront_font.toml`.
+
+## JetBrains Mono
+
+Shipped file: `fonts/JetBrainsMono-Regular.ttf`, byte-verbatim upstream release.
+
+License: OFL-1.1. Local license: `LICENSES/JetBrainsMono-OFL-1.1.txt`.
+
+Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+
+Source: https://github.com/JetBrains/JetBrainsMono
+
+Revision: cd5227bd1f61dff3bbd6c814ceaf7ffd95e947d9
+
+https://raw.githubusercontent.com/JetBrains/JetBrainsMono/cd5227bd1f61dff3bbd6c814ceaf7ffd95e947d9/fonts/ttf/JetBrainsMono-Regular.ttf
+
+Details in `THIRD_PARTY/jetbrains_mono_fonts.toml`.
+
+## Fira Code
+
+Shipped file: `fonts/FiraCode-Regular.ttf`, byte-verbatim upstream release.
+
+License: OFL-1.1. Local license: `LICENSES/FiraCode-OFL-1.1.txt`.
+
+Copyright (c) 2014, The Fira Code Project Authors (https://github.com/tonsky/FiraCode)
+
+Source: https://github.com/tonsky/FiraCode
+
+Revision: eee6db993696aba61ff4eef03698e2987d79910c
+
+https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip
+
+Details in `THIRD_PARTY/fira_code_fonts.toml`.

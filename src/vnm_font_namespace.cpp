@@ -457,25 +457,48 @@ Registered_font register_marked_font(const QByteArray& font_bytes, const Family_
         return registered;
     }
 
+    // A font database may report more than one family for one face, and both
+    // extra kinds are legitimate. Windows reports a face under its typographic
+    // family (name ID 16) as well as its family name (name ID 1) when the two
+    // differ, and DirectWrite additionally derives a width-stripped family:
+    // Roboto Condensed (vnm) also appears as Roboto (vnm), a name that is in no
+    // record of the file. It also repeats a family once per name record, so a
+    // face carrying name ID 16 on two platforms is reported twice.
+    //
+    // So the count carries no information. What matters is that the family the
+    // name table declares is among those reported - that is the one this call
+    // hands back, and the one a caller asks the font database for - and that
+    // every reported family carries the mark, since an unmarked one could
+    // collide with a font the user has installed.
     const QStringList families = QFontDatabase::applicationFontFamilies(registered.font_id);
-    if (families.size() != 1) {
-        QFontDatabase::removeApplicationFont(registered.font_id);
-        registered.font_id = -1;
-        registered.error   = QStringLiteral("The marked font exposed %1 families, not one: %2.")
-                                 .arg(families.size()).arg(families.join(QStringLiteral(", ")));
-        return registered;
-    }
+    const QString     mark     = QString::fromLatin1(k_family_mark);
 
-    registered.family = families.first();
-    if (!registered.family.endsWith(QString::fromLatin1(k_family_mark))) {
+    QStringList unmarked;
+    for (const QString& family : families) {
+        if (!family.endsWith(mark)) {
+            unmarked.append(family);
+        }
+    }
+    if (!unmarked.isEmpty()) {
         QFontDatabase::removeApplicationFont(registered.font_id);
         registered.font_id = -1;
         registered.error   = QStringLiteral(
-                                 "The font database resolved %1, which does not carry the mark. "
-                                 "Registering it would reintroduce the family collision.")
-                                 .arg(families.first());
-        registered.family.clear();
+                                 "The font database resolved %1 without the mark. Registering "
+                                 "that would reintroduce the family collision.")
+                                 .arg(unmarked.join(QStringLiteral(", ")));
+        return registered;
     }
+    if (!families.contains(marked.family)) {
+        QFontDatabase::removeApplicationFont(registered.font_id);
+        registered.font_id = -1;
+        registered.error   = QStringLiteral(
+                                 "The marked font declares the family %1, which the font database "
+                                 "did not report. It reported %2.")
+                                 .arg(marked.family, families.join(QStringLiteral(", ")));
+        return registered;
+    }
+
+    registered.family = marked.family;
     return registered;
 }
 
@@ -519,6 +542,10 @@ constexpr Shipped_font_entry k_shipped_fonts[] = {
      ":/vnm_fonts/ABeeZee-Regular.ttf",             0,  nullptr},
     {Shipped_font::UBUNTU_MONO_BRONT,
      ":/vnm_fonts/UbuntuMono-Bront.ttf",            0,  nullptr},
+    {Shipped_font::JETBRAINS_MONO,
+     ":/vnm_fonts/JetBrainsMono-Regular.ttf",       0,  nullptr},
+    {Shipped_font::FIRA_CODE,
+     ":/vnm_fonts/FiraCode-Regular.ttf",            0,  nullptr},
 };
 
 const Shipped_font_entry* entry_for(Shipped_font font)

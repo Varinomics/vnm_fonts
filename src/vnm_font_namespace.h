@@ -56,6 +56,8 @@ enum class Shipped_font
     JULIAMONO,
     ABEEZEE,
     UBUNTU_MONO_BRONT,
+    JETBRAINS_MONO,
+    FIRA_CODE,
 };
 
 // A patched font, or the reason it could not be patched. The bytes differ from
@@ -69,8 +71,14 @@ struct Marked_font
     bool is_valid() const { return error.isEmpty(); }
 };
 
-// A font registered with QFontDatabase, or the reason it could not be. The
-// family is what the font database resolved, not what the caller expected.
+// A font registered with QFontDatabase, or the reason it could not be.
+//
+// The family is the one the font's own name table declares, verified to be
+// among those the font database reported. A font database may report several
+// families for one face - a typographic family alongside a family name, a
+// width-stripped variant DirectWrite derives and no record of the file
+// contains, or the same name once per name record - so the reported list is not
+// a choice to be made by picking one of them.
 struct Registered_font
 {
     QString family;
@@ -89,9 +97,10 @@ Marked_font mark_font_family(
     const Family_override& overrides = Family_override());
 
 // Marks the font and hands it to QFontDatabase::addApplicationFontFromData.
-// Fails when the patch fails, when registration is refused, or when the family
-// the font database resolves does not carry the mark. There is no fallback to
-// the unmarked font: registering that is the defect this call prevents.
+// Fails when the patch fails, when registration is refused, when any family the
+// font database reports lacks the mark, or when the family the name table
+// declares is not among those reported. There is no fallback to the unmarked
+// font: registering that is the defect this call prevents.
 Registered_font register_marked_font(
     const QByteArray&      font_bytes,
     const Family_override& overrides = Family_override());

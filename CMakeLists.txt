@@ -12,7 +12,7 @@ if(vnm_fonts_already_included)
 endif()
 set_property(GLOBAL PROPERTY VNM_FONTS_INCLUDED TRUE)
 
-project(vnm_fonts LANGUAGES CXX)
+project(vnm_fonts VERSION 1.0.0 LANGUAGES CXX)
 
 # This repository serves two contracts, and only one of them needs Qt.
 #
@@ -36,42 +36,7 @@ find_package(Qt6 QUIET COMPONENTS Core Gui)
 set(VNM_FONTS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fonts
     CACHE PATH "Directory holding the byte-verbatim shipped font files")
 
-if(Qt6_FOUND)
-    # EXCLUDE_FROM_ALL, because a file-only consumer that adds this repository
-    # for VNM_FONTS_DIRECTORY would otherwise compile the whole resource for
-    # nothing: all ten fonts land in the generated qrc translation unit, which
-    # is some 29 MB of source on every such build. A target excluded from the
-    # default build is still built when another target links it, so vnm::fonts
-    # keeps working for Qt consumers with no change on their side.
-    add_library(vnm_fonts STATIC EXCLUDE_FROM_ALL
-        src/vnm_font_namespace.cpp
-        src/vnm_font_namespace.h
-        vnm_fonts.qrc)
-
-    set_target_properties(vnm_fonts PROPERTIES AUTORCC ON)
-
-    target_include_directories(vnm_fonts PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-    target_link_libraries(vnm_fonts PUBLIC Qt6::Core Qt6::Gui)
-    target_compile_features(vnm_fonts PUBLIC cxx_std_17)
-
-    add_library(vnm::fonts ALIAS vnm_fonts)
-else()
-    # Configuring succeeds; only the library contract is withheld. A consumer
-    # that links vnm::fonts now fails on that line naming the missing target,
-    # with this line directly above it in the configure log saying why - rather
-    # than failing inside a repository it only wanted a file path from.
-    message(STATUS
-        "vnm_fonts: Qt6 Core and Gui were not found, so the vnm::fonts library "
-        "is not defined. VNM_FONTS_DIRECTORY (${VNM_FONTS_DIRECTORY}) and the "
-        "manifest are available as usual; link vnm::fonts only where Qt is "
-        "present.")
-endif()
-
-# Lets a consumer branch on which contract it has, instead of testing Qt6_FOUND
-# itself and guessing what this repository did with it.
-set(VNM_FONTS_LIBRARY_AVAILABLE ${Qt6_FOUND})
-
-# Redistributing these fonts means redistributing their licences: all ten are
+# Redistributing these fonts means redistributing their licences: all twelve are
 # OFL-1.1, Apache-2.0 or the Ubuntu Font Licence, and each requires the licence
 # and copyright notice to accompany every copy. The obligation travelled here
 # with the fonts, so the install rules do too, and they sit outside the Qt
@@ -102,6 +67,111 @@ set(VNM_FONTS_LICENSE_FILES ${vnm_fonts_license_files}
 install(FILES ${VNM_FONTS_LICENSE_FILES} ${VNM_FONTS_NOTICES_FILE}
     DESTINATION ${VNM_FONTS_INSTALL_DOCDIR}
     COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+
+# A consumer that links the library from an install tree needs it installed and
+# find_package-able; one that only wanted VNM_FONTS_DIRECTORY does not, and must
+# not pay for it. Installing the library also means building it by default,
+# which is the opposite of what the file-only consumer wants, so the two are one
+# decision. A standalone build is here to be installed; a subproject is not,
+# unless it says so.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(vnm_fonts_install_library_default ON)
+else()
+    set(vnm_fonts_install_library_default OFF)
+endif()
+option(VNM_FONTS_INSTALL_LIBRARY
+    "Install the vnm_fonts library and a find_package-able CMake package"
+    ${vnm_fonts_install_library_default})
+
+if(Qt6_FOUND)
+    # Not installing means not building by default either: a file-only consumer
+    # that adds this repository for VNM_FONTS_DIRECTORY would otherwise compile
+    # the whole resource for nothing, all twelve fonts in one generated translation
+    # unit of some 29 MB. A target excluded from the default build is still
+    # built when another target links it, so vnm::fonts keeps working either way.
+    set(vnm_fonts_exclude_from_all EXCLUDE_FROM_ALL)
+    if(VNM_FONTS_INSTALL_LIBRARY)
+        set(vnm_fonts_exclude_from_all "")
+    endif()
+
+    add_library(vnm_fonts STATIC ${vnm_fonts_exclude_from_all}
+        src/vnm_font_namespace.cpp
+        src/vnm_font_namespace.h
+        vnm_fonts.qrc)
+
+    # EXPORT_NAME, so the imported target is vnm::fonts and not vnm::vnm_fonts:
+    # an export names a target from NAMESPACE plus this, not from the alias the
+    # build tree defines. A consumer must spell the target the same way whether
+    # it took this repository as a subproject or found the installed package.
+    set_target_properties(vnm_fonts PROPERTIES
+        AUTORCC     ON
+        EXPORT_NAME fonts)
+
+    target_include_directories(vnm_fonts PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/vnm_fonts>)
+    target_link_libraries(vnm_fonts PUBLIC Qt6::Core Qt6::Gui)
+    target_compile_features(vnm_fonts PUBLIC cxx_std_17)
+
+    add_library(vnm::fonts ALIAS vnm_fonts)
+
+    if(VNM_FONTS_INSTALL_LIBRARY)
+        include(CMakePackageConfigHelpers)
+
+        # The font files travel with the package so VNM_FONTS_DIRECTORY means
+        # the same thing whether the consumer took this repository as a
+        # subproject or found the installed package.
+        set(VNM_FONTS_INSTALL_FONTSDIR ${CMAKE_INSTALL_DATAROOTDIR}/vnm_fonts/fonts
+            CACHE INTERNAL "Install destination of the shipped font files")
+
+        install(TARGETS vnm_fonts
+            EXPORT vnm_fonts-targets
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                    COMPONENT ${VNM_FONTS_INSTALL_COMPONENT}
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vnm_fonts)
+        install(FILES src/vnm_font_namespace.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vnm_fonts
+            COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+        install(DIRECTORY fonts/
+            DESTINATION ${VNM_FONTS_INSTALL_FONTSDIR}
+            COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+        install(EXPORT vnm_fonts-targets
+            FILE vnm_fonts-targets.cmake
+            NAMESPACE vnm::
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vnm_fonts
+            COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+
+        configure_package_config_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/vnm_fonts-config.cmake.in
+            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config.cmake
+            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vnm_fonts
+            PATH_VARS VNM_FONTS_INSTALL_FONTSDIR)
+        write_basic_package_version_file(
+            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config-version.cmake
+            VERSION ${PROJECT_VERSION}
+            COMPATIBILITY SameMajorVersion)
+        install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config-version.cmake
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vnm_fonts
+            COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+    endif()
+else()
+    # Configuring succeeds; only the library contract is withheld. A consumer
+    # that links vnm::fonts now fails on that line naming the missing target,
+    # with this line directly above it in the configure log saying why - rather
+    # than failing inside a repository it only wanted a file path from.
+    message(STATUS
+        "vnm_fonts: Qt6 Core and Gui were not found, so the vnm::fonts library "
+        "is not defined. VNM_FONTS_DIRECTORY (${VNM_FONTS_DIRECTORY}) and the "
+        "manifest are available as usual; link vnm::fonts only where Qt is "
+        "present.")
+endif()
+
+# Lets a consumer branch on which contract it has, instead of testing Qt6_FOUND
+# itself and guessing what this repository did with it.
+set(VNM_FONTS_LIBRARY_AVAILABLE ${Qt6_FOUND})
+
 
 # add_subdirectory(... EXCLUDE_FROM_ALL) discards a subdirectory's install rules
 # outright - measured on CMake 3.30 - and FetchContent passes that form when its
@@ -155,6 +225,11 @@ if(VNM_FONTS_BUILD_TESTS)
 endif()
 
 if(VNM_FONTS_BUILD_TESTS AND Qt6_FOUND)
+    # Forwarded into the driver scripts below, escaped so a multi-entry prefix
+    # path survives as one argument rather than being split by CMake's list
+    # handling on the way through the command line.
+    string(REPLACE ";" "\;" vnm_fonts_forwarded_prefix_path "${CMAKE_PREFIX_PATH}")
+
     # Registering a font needs a platform plugin but no display.
     set(vnm_fonts_test_environment "QT_QPA_PLATFORM=offscreen")
 
@@ -188,8 +263,58 @@ if(VNM_FONTS_BUILD_TESTS AND Qt6_FOUND)
                 -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
                 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                 -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
-                -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+                "-DCMAKE_PREFIX_PATH=${vnm_fonts_forwarded_prefix_path}"
                 -DVNM_FONTS_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR})
+
+    # The offscreen platform reports one family per registered font. A real
+    # font engine does not: Windows reports a face under its typographic family
+    # as well as its family name, DirectWrite derives a width-stripped family
+    # that is in no record of the file, and a family is repeated once per name
+    # record. Every one of those was invisible to the gates above until a
+    # consumer hit it on a real desktop, so the same tests run again on the
+    # platform plugin the product actually uses. Labelled so a headless CI can
+    # exclude them the way logonomic does.
+    if(WIN32)
+        add_test(
+            NAME vnm_font_namespace_real_platform
+            COMMAND vnm_font_namespace_tests ${VNM_FONTS_DIRECTORY})
+        add_test(
+            NAME vnm_fonts_consumer_real_platform
+            COMMAND vnm_fonts_consumer_tests)
+        set_tests_properties(
+            vnm_font_namespace_real_platform vnm_fonts_consumer_real_platform
+            PROPERTIES
+                ENVIRONMENT "QT_QPA_PLATFORM=windows"
+                LABELS "real-platform")
+    endif()
+
+    # Proves a consumer can link the library from an install tree rather than
+    # only from inside this build. vnm_fonts_consumer above links it in-tree and
+    # cannot see a missing or broken package; vnm_framework's packaging smoke
+    # test could, and did.
+    #
+    # This gate links, so unlike the configure-only ones it needs the toolchain
+    # environment: a build tree carries neither MSVC's LIB and INCLUDE nor the
+    # PATH that finds its linker, and ctest runs in whatever shell the caller
+    # had. They are captured here, where the configure that found the compiler
+    # ran, and handed to the driver. Bracket syntax, because all three contain
+    # semicolons and backslashes.
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts_build_environment.cmake
+"set(VNM_FONTS_ENV_PATH [==[$ENV{PATH}]==])
+set(VNM_FONTS_ENV_LIB [==[$ENV{LIB}]==])
+set(VNM_FONTS_ENV_INCLUDE [==[$ENV{INCLUDE}]==])
+")
+    add_test(
+        NAME vnm_fonts_installed_package
+        COMMAND ${CMAKE_COMMAND}
+                -DVNM_FONTS_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+                -DVNM_FONTS_BUILD_ROOT=${CMAKE_CURRENT_BINARY_DIR}/installed_package
+                -DVNM_FONTS_GENERATOR=${CMAKE_GENERATOR}
+                -DVNM_FONTS_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+                -DVNM_FONTS_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                "-DVNM_FONTS_PREFIX_PATH=${vnm_fonts_forwarded_prefix_path}"
+                -DVNM_FONTS_ENVIRONMENT_FILE=${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts_build_environment.cmake
+                -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/build_installed_package_consumer.cmake)
 
     # Proves the file contract costs a consumer nothing: a project that adds
     # this repository and links nothing from it must build neither the library
@@ -205,7 +330,7 @@ if(VNM_FONTS_BUILD_TESTS AND Qt6_FOUND)
                 -DVNM_FONTS_GENERATOR=${CMAKE_GENERATOR}
                 -DVNM_FONTS_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
                 -DVNM_FONTS_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                -DVNM_FONTS_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+                "-DVNM_FONTS_PREFIX_PATH=${vnm_fonts_forwarded_prefix_path}"
                 -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/build_file_only_consumer.cmake)
 
     # Proves the file contract survives with no Qt. Registered only in a

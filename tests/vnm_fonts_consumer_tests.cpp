@@ -51,6 +51,8 @@ std::vector<vnm_fonts::Shipped_font> every_shipped_font()
         Shipped_font::JULIAMONO,
         Shipped_font::ABEEZEE,
         Shipped_font::UBUNTU_MONO_BRONT,
+        Shipped_font::JETBRAINS_MONO,
+        Shipped_font::FIRA_CODE,
     };
 }
 
@@ -96,10 +98,10 @@ int main(int argc, char** argv)
         families.insert(registered.family);
     }
 
-    // The two Roboto weights deliberately share one family, so ten fonts make
-    // nine families. Anything fewer means two faces merged.
-    check(families.size() == 9,
-          QStringLiteral("the shipped fonts registered %1 families, expected 9: %2")
+    // The two Roboto weights deliberately share one family, so twelve fonts make
+    // eleven families. Anything fewer means two faces merged.
+    check(families.size() == 11,
+          QStringLiteral("the shipped fonts registered %1 families, expected 11: %2")
               .arg(families.size())
               .arg(QStringList(families.values()).join(QLatin1String(", "))));
 
@@ -112,6 +114,6 @@ int main(int argc, char** argv)
         std::fprintf(stderr, "%d check(s) failed.\n", s_failures);
         return 1;
     }
-    std::printf("PASS 10 shipped fonts register by id into 9 families.\n");
+    std::printf("PASS 12 shipped fonts register by id into 11 families.\n");
     return 0;
 }
