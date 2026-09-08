@@ -109,11 +109,11 @@ The target is spelled `vnm::fonts` either way, and the package sets
 `VNM_FONTS_DIRECTORY` too, pointing at the installed fonts, so the file contract
 means the same thing from a subproject or from an install tree.
 
-A standalone build installs the library and its package by default; a subproject
-does not, since a consumer that only wanted `VNM_FONTS_DIRECTORY` should neither
-build nor install it. Set `VNM_FONTS_INSTALL_LIBRARY=ON` in a subproject that
-needs the installed package — `vnm_framework` does, because its own packaging
-smoke test links a library that calls into this one.
+A standalone build installs the library and its package. A source consumer that
+exports a library depending on `vnm::fonts` calls `vnm_fonts_install_package()`
+after dependency discovery. The call is idempotent and enables installation even
+if a file-only consumer included the source first. Consumers of an already
+installed `vnm::fonts` target do not need this source-package operation.
 
 ### Consumers that need a file, not bytes
 

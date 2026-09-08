@@ -68,33 +68,10 @@ install(FILES ${VNM_FONTS_LICENSE_FILES} ${VNM_FONTS_NOTICES_FILE}
     DESTINATION ${VNM_FONTS_INSTALL_DOCDIR}
     COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
 
-# A consumer that links the library from an install tree needs it installed and
-# find_package-able; one that only wanted VNM_FONTS_DIRECTORY does not, and must
-# not pay for it. Installing the library also means building it by default,
-# which is the opposite of what the file-only consumer wants, so the two are one
-# decision. A standalone build is here to be installed; a subproject is not,
-# unless it says so.
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    set(vnm_fonts_install_library_default ON)
-else()
-    set(vnm_fonts_install_library_default OFF)
-endif()
-option(VNM_FONTS_INSTALL_LIBRARY
-    "Install the vnm_fonts library and a find_package-able CMake package"
-    ${vnm_fonts_install_library_default})
-
 if(Qt6_FOUND)
-    # Not installing means not building by default either: a file-only consumer
-    # that adds this repository for VNM_FONTS_DIRECTORY would otherwise compile
-    # the whole resource for nothing, all twelve fonts in one generated translation
-    # unit of some 29 MB. A target excluded from the default build is still
-    # built when another target links it, so vnm::fonts keeps working either way.
-    set(vnm_fonts_exclude_from_all EXCLUDE_FROM_ALL)
-    if(VNM_FONTS_INSTALL_LIBRARY)
-        set(vnm_fonts_exclude_from_all "")
-    endif()
-
-    add_library(vnm_fonts STATIC ${vnm_fonts_exclude_from_all}
+    # File-only consumers incur no resource compilation; linking or requesting
+    # package installation brings the library into their build.
+    add_library(vnm_fonts STATIC EXCLUDE_FROM_ALL
         src/vnm_font_namespace.cpp
         src/vnm_font_namespace.h
         vnm_fonts.qrc)
@@ -105,7 +82,8 @@ if(Qt6_FOUND)
     # it took this repository as a subproject or found the installed package.
     set_target_properties(vnm_fonts PROPERTIES
         AUTORCC     ON
-        EXPORT_NAME fonts)
+        EXPORT_NAME fonts
+        VERSION     ${PROJECT_VERSION})
 
     target_include_directories(vnm_fonts PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
@@ -115,7 +93,18 @@ if(Qt6_FOUND)
 
     add_library(vnm::fonts ALIAS vnm_fonts)
 
-    if(VNM_FONTS_INSTALL_LIBRARY)
+    # Installation is an explicit idempotent source-package operation. A later
+    # consumer can request it even when a file-only dependency included us first.
+    function(vnm_fonts_install_package)
+        get_property(package_installed GLOBAL PROPERTY VNM_FONTS_PACKAGE_INSTALL)
+        if(package_installed)
+            return()
+        endif()
+        set_property(GLOBAL PROPERTY VNM_FONTS_PACKAGE_INSTALL TRUE)
+        set_target_properties(vnm_fonts PROPERTIES EXCLUDE_FROM_ALL FALSE)
+        get_target_property(fonts_source vnm_fonts SOURCE_DIR)
+        get_target_property(fonts_binary vnm_fonts BINARY_DIR)
+        get_target_property(fonts_version vnm_fonts VERSION)
         include(CMakePackageConfigHelpers)
 
         # The font files travel with the package so VNM_FONTS_DIRECTORY means
@@ -129,10 +118,10 @@ if(Qt6_FOUND)
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
                     COMPONENT ${VNM_FONTS_INSTALL_COMPONENT}
             INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vnm_fonts)
-        install(FILES src/vnm_font_namespace.h
+        install(FILES ${fonts_source}/src/vnm_font_namespace.h
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/vnm_fonts
             COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
-        install(DIRECTORY fonts/
+        install(DIRECTORY ${fonts_source}/fonts/
             DESTINATION ${VNM_FONTS_INSTALL_FONTSDIR}
             COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
         install(EXPORT vnm_fonts-targets
@@ -142,19 +131,23 @@ if(Qt6_FOUND)
             COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
 
         configure_package_config_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/vnm_fonts-config.cmake.in
-            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config.cmake
+            ${fonts_source}/cmake/vnm_fonts-config.cmake.in
+            ${fonts_binary}/vnm_fonts-config.cmake
             INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vnm_fonts
             PATH_VARS VNM_FONTS_INSTALL_FONTSDIR)
         write_basic_package_version_file(
-            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config-version.cmake
-            VERSION ${PROJECT_VERSION}
+            ${fonts_binary}/vnm_fonts-config-version.cmake
+            VERSION ${fonts_version}
             COMPATIBILITY SameMajorVersion)
         install(FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config.cmake
-            ${CMAKE_CURRENT_BINARY_DIR}/vnm_fonts-config-version.cmake
+            ${fonts_binary}/vnm_fonts-config.cmake
+            ${fonts_binary}/vnm_fonts-config-version.cmake
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/vnm_fonts
             COMPONENT ${VNM_FONTS_INSTALL_COMPONENT})
+    endfunction()
+
+    if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+        vnm_fonts_install_package()
     endif()
 else()
     # Configuring succeeds; only the library contract is withheld. A consumer

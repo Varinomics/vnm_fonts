@@ -52,12 +52,12 @@ function(run_step description)
     endif()
 endfunction()
 
-# A standalone configure installs the library by default, which is what a
-# packager does. Nothing here passes VNM_FONTS_INSTALL_LIBRARY, so the default
-# is part of what is under test.
+# A nested file-only consumer includes the source first. The later package owner
+# must still be able to install its dependency, regardless of inclusion order.
 run_step("Configuring vnm_fonts for installation"
     ${CMAKE_COMMAND}
-    -S ${VNM_FONTS_SOURCE_DIR}
+    -S ${VNM_FONTS_SOURCE_DIR}/tests/install_after_file_consumer
+    -DVNM_FONTS_SOURCE_DIR=${VNM_FONTS_SOURCE_DIR}
     -B ${library_build}
     -G ${VNM_FONTS_GENERATOR}
     -DCMAKE_MAKE_PROGRAM=${VNM_FONTS_MAKE_PROGRAM}
@@ -86,6 +86,7 @@ run_step("Configuring a consumer against the installed package"
     -DCMAKE_MAKE_PROGRAM=${VNM_FONTS_MAKE_PROGRAM}
     -DCMAKE_CXX_COMPILER=${VNM_FONTS_CXX_COMPILER}
     "-DCMAKE_PREFIX_PATH=${consumer_prefix_path}"
+    -DVNM_FONTS_EXPECTED_PREFIX=${staging_prefix}
     -DCMAKE_BUILD_TYPE=Release)
 
 run_step("Linking a consumer against the installed package"

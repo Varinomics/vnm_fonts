@@ -7,7 +7,17 @@ cmake_minimum_required(VERSION 3.21)
 # from a working one.
 project(vnm_fonts_installed_package_consumer LANGUAGES CXX)
 
-find_package(vnm_fonts REQUIRED)
+if(NOT VNM_FONTS_EXPECTED_PREFIX)
+    message(FATAL_ERROR "VNM_FONTS_EXPECTED_PREFIX must identify the staged installation.")
+endif()
+find_package(vnm_fonts CONFIG REQUIRED
+    PATHS "${VNM_FONTS_EXPECTED_PREFIX}" NO_DEFAULT_PATH)
+file(REAL_PATH "${VNM_FONTS_EXPECTED_PREFIX}" expected_prefix)
+file(REAL_PATH "${vnm_fonts_DIR}" resolved_package)
+cmake_path(IS_PREFIX expected_prefix "${resolved_package}" NORMALIZE package_is_staged)
+if(NOT package_is_staged)
+    message(FATAL_ERROR "vnm_fonts resolved outside the staged installation: ${resolved_package}")
+endif()
 
 if(NOT TARGET vnm::fonts)
     message(FATAL_ERROR "The installed package did not define vnm::fonts.")
