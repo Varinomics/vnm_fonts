@@ -1,0 +1,19 @@
+<!-- The prefix is "/" with an explicit vnm_fonts/ alias on every entry rather
+     than prefix="/vnm_fonts", because Qt concatenates the prefix with the
+     source path: a non-root prefix here would produce :/vnm_fonts/fonts/...
+     The files are byte-verbatim upstream releases; the family name they
+     register under is applied at load time by src/vnm_font_namespace.cpp. -->
+<RCC>
+  <qresource prefix="/">
+    <file alias="vnm_fonts/RobotoCondensed-Regular.ttf">fonts/RobotoCondensed-Regular.ttf</file>
+    <file alias="vnm_fonts/RobotoCondensed-Light.ttf">fonts/RobotoCondensed-Light.ttf</file>
+    <file alias="vnm_fonts/FontAwesome.otf">fonts/FontAwesome.otf</file>
+    <file alias="vnm_fonts/FontAwesome7Brands-Regular.otf">fonts/FontAwesome7Brands-Regular.otf</file>
+    <file alias="vnm_fonts/FontAwesome7Free-Regular.otf">fonts/FontAwesome7Free-Regular.otf</file>
+    <file alias="vnm_fonts/FontAwesome7Free-Solid.otf">fonts/FontAwesome7Free-Solid.otf</file>
+    <file alias="vnm_fonts/NotoSansSymbols2-Regular.ttf">fonts/NotoSansSymbols2-Regular.ttf</file>
+    <file alias="vnm_fonts/JuliaMono-Regular.ttf">fonts/JuliaMono-Regular.ttf</file>
+    <file alias="vnm_fonts/ABeeZee-Regular.ttf">fonts/ABeeZee-Regular.ttf</file>
+    <file alias="vnm_fonts/UbuntuMono-Bront.ttf">fonts/UbuntuMono-Bront.ttf</file>
+  </qresource>
+</RCC>

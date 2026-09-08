@@ -1,10 +1,18 @@
 #include "vnm_font_namespace.h"
 
+#include <QFile>
 #include <QFontDatabase>
+#include <QMap>
 #include <QStringConverter>
 #include <QStringList>
 #include <algorithm>
 #include <vector>
+
+// Forward-declare the generated resource initializer so the linker pulls
+// vnm_fonts.qrc in when this library is linked statically. The generated symbol
+// is at global scope, and declaring it inside a namespace - anonymous ones
+// included - gives the declaration internal linkage and leaves it unresolved.
+extern int qInitResources_vnm_fonts();
 
 namespace vnm_fonts {
 namespace {
@@ -467,6 +475,111 @@ Registered_font register_marked_font(const QByteArray& font_bytes, const Family_
                                  "Registering it would reintroduce the family collision.")
                                  .arg(families.first());
         registered.family.clear();
+    }
+    return registered;
+}
+
+namespace {
+
+// The one place a shipped font's resource path and family override are written
+// down. A consumer that repeated either would be one forgotten override away
+// from merging two families, which is the defect this library removes.
+//
+// An override name ID of zero means the font needs none: zero is the copyright
+// record, which is never a family name, so it cannot be mistaken for one.
+struct Shipped_font_entry
+{
+    Shipped_font font;
+    const char*  resource_path;
+    quint16      override_name_id;
+    const char*  override_value;
+};
+
+constexpr Shipped_font_entry k_shipped_fonts[] = {
+    {Shipped_font::ROBOTO_CONDENSED_REGULAR,
+     ":/vnm_fonts/RobotoCondensed-Regular.ttf",     0,  nullptr},
+    {Shipped_font::ROBOTO_CONDENSED_LIGHT,
+     ":/vnm_fonts/RobotoCondensed-Light.ttf",       0,  nullptr},
+    {Shipped_font::FONT_AWESOME_4,
+     ":/vnm_fonts/FontAwesome.otf",                 0,  nullptr},
+    {Shipped_font::FONT_AWESOME_7_BRANDS,
+     ":/vnm_fonts/FontAwesome7Brands-Regular.otf",  0,  nullptr},
+    {Shipped_font::FONT_AWESOME_7_FREE_REGULAR,
+     ":/vnm_fonts/FontAwesome7Free-Regular.otf",    0,  nullptr},
+    // Upstream files the Solid face under the Regular face's typographic
+    // family, so without this the two register as one family and the host is
+    // free to resolve either.
+    {Shipped_font::FONT_AWESOME_7_FREE_SOLID,
+     ":/vnm_fonts/FontAwesome7Free-Solid.otf",      16, "Font Awesome 7 Free Solid"},
+    {Shipped_font::NOTO_SANS_SYMBOLS_2,
+     ":/vnm_fonts/NotoSansSymbols2-Regular.ttf",    0,  nullptr},
+    {Shipped_font::JULIAMONO,
+     ":/vnm_fonts/JuliaMono-Regular.ttf",           0,  nullptr},
+    {Shipped_font::ABEEZEE,
+     ":/vnm_fonts/ABeeZee-Regular.ttf",             0,  nullptr},
+    {Shipped_font::UBUNTU_MONO_BRONT,
+     ":/vnm_fonts/UbuntuMono-Bront.ttf",            0,  nullptr},
+};
+
+const Shipped_font_entry* entry_for(Shipped_font font)
+{
+    for (const Shipped_font_entry& entry : k_shipped_fonts) {
+        if (entry.font == font) {
+            return &entry;
+        }
+    }
+    return nullptr;
+}
+
+// QFontDatabase requires the GUI thread, so every caller of this reaches it
+// from there and the cache needs no lock.
+QMap<int, Registered_font>& registration_cache()
+{
+    static QMap<int, Registered_font> cache;
+    return cache;
+}
+
+}
+
+void initialize_resources()
+{
+    ::qInitResources_vnm_fonts();
+}
+
+Registered_font register_shipped_font(Shipped_font font)
+{
+    const int cache_key = static_cast<int>(font);
+    const auto cached   = registration_cache().constFind(cache_key);
+    if (cached != registration_cache().constEnd()) {
+        return *cached;
+    }
+
+    Registered_font registered;
+
+    const Shipped_font_entry* const entry = entry_for(font);
+    if (entry == nullptr) {
+        registered.error = QStringLiteral("Shipped font %1 is not in the font table.")
+                               .arg(cache_key);
+        return registered;
+    }
+
+    initialize_resources();
+
+    QFile file(QString::fromLatin1(entry->resource_path));
+    if (!file.open(QIODevice::ReadOnly)) {
+        registered.error = QStringLiteral("The shipped font %1 is not in the resource.")
+                               .arg(QString::fromLatin1(entry->resource_path));
+        return registered;
+    }
+
+    Family_override overrides;
+    if (entry->override_name_id != 0) {
+        overrides.insert(entry->override_name_id, QString::fromLatin1(entry->override_value));
+    }
+
+    registered = register_marked_font(file.readAll(), overrides);
+    if (registered.is_valid()) {
+        registration_cache().insert(cache_key, registered);
     }
     return registered;
 }

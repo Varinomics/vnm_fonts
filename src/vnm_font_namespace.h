@@ -12,16 +12,18 @@
 // memory on the way into QFontDatabase, so nothing this repository
 // redistributes differs from what upstream published.
 //
-// Callers must not construct the marked family name themselves. Ask for it:
+// Callers must not construct the marked family name themselves, and should not
+// handle font bytes or family overrides either. Ask for a shipped font by id:
 //
 //     const vnm_fonts::Registered_font sans =
-//         vnm_fonts::register_marked_font(font_bytes);
+//         vnm_fonts::register_shipped_font(vnm_fonts::Shipped_font::ROBOTO_CONDENSED_REGULAR);
 //     if (!sans.is_valid()) {
 //         // sans.error says why; there is no unmarked fallback.
 //     }
 //     label->setFont(QFont(sans.family));
 //
-// A hand-written copy of the name is the drift this call exists to prevent.
+// A hand-written copy of the name is the drift this call exists to prevent, and
+// a hand-written override table is how a consumer silently merges two families.
 
 #include <QByteArray>
 #include <QMap>
@@ -38,6 +40,23 @@ constexpr const char* k_family_mark = " (vnm)";
 // family. Font Awesome 7 Free Solid is the only current user: upstream files it
 // under the same typographic family as Font Awesome 7 Free Regular.
 using Family_override = QMap<quint16, QString>;
+
+// The fonts this library carries, one per file in fonts/. The resource path and
+// the family override of each are resolved inside the library, so a consumer
+// never repeats either.
+enum class Shipped_font
+{
+    ROBOTO_CONDENSED_REGULAR,
+    ROBOTO_CONDENSED_LIGHT,
+    FONT_AWESOME_4,
+    FONT_AWESOME_7_BRANDS,
+    FONT_AWESOME_7_FREE_REGULAR,
+    FONT_AWESOME_7_FREE_SOLID,
+    NOTO_SANS_SYMBOLS_2,
+    JULIAMONO,
+    ABEEZEE,
+    UBUNTU_MONO_BRONT,
+};
 
 // A patched font, or the reason it could not be patched. The bytes differ from
 // the input only in the name table and in head.checkSumAdjustment.
@@ -76,5 +95,19 @@ Marked_font mark_font_family(
 Registered_font register_marked_font(
     const QByteArray&      font_bytes,
     const Family_override& overrides = Family_override());
+
+// Makes the fonts built into this library reachable under ":/vnm_fonts/".
+// This library is static, so the linker discards the generated resource
+// initializer unless something references it; this call is that reference.
+// register_shipped_font calls it, so a consumer that only registers fonts needs
+// nothing. A consumer reading ":/vnm_fonts/..." itself must call it first.
+// Calling it more than once is harmless.
+void initialize_resources();
+
+// Registers one of the fonts this library carries, resolving its resource path
+// and its family override from the one table that holds them. Registering the
+// same font twice in a process returns the family the first call produced
+// rather than registering the bytes again.
+Registered_font register_shipped_font(Shipped_font font);
 
 }
