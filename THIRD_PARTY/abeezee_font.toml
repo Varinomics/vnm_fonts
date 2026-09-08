@@ -1,0 +1,31 @@
+name = "ABeeZee"
+spdx_license_expression = "OFL-1.1"
+copyright = "Copyright 2011 The ABeeZee Project Authors (https://github.com/googlefonts/abeezee) with Reserved Font Name ABeeZee"
+license_text = "LICENSES/ABeeZee-OFL-1.1.txt"
+license_text_sha256 = "f0376d04eb58fb19e9f1690a99a1eb37380ad0246f7d503f2abd8e8a74ed12be"
+
+upstream_repository = "https://github.com/google/fonts"
+upstream_revision = "a8bc01c6dcb2933dca0f37180df6c516e226b346"
+upstream_revision_role = "immutable provenance input; not a forward dependency pin"
+upstream_family_source_revision = "b9bd3f3522d91aca81eb668f56d40c2c62a90125"
+upstream_family_source_path = "fonts/ttf/ABeeZee-Regular.ttf"
+upstream_family_source_role = "the googlefonts/abeezee revision Google Fonts recorded as the origin of the file it publishes"
+upstream_license_path = "ofl/abeezee/OFL.txt"
+upstream_license_url = "https://raw.githubusercontent.com/google/fonts/a8bc01c6dcb2933dca0f37180df6c516e226b346/ofl/abeezee/OFL.txt"
+upstream_license_sha256 = "f0376d04eb58fb19e9f1690a99a1eb37380ad0246f7d503f2abd8e8a74ed12be"
+
+used_for = "the loading screen"
+supersedes = ["logonomic loading_screen/fonts/ABeeZee-Regular.ttf"]
+supersedes_note = "logonomic vendors the same upstream file byte-verbatim, so the copy here is the same bytes."
+
+[[artifact]]
+key = "abeezee"
+path = "fonts/ABeeZee-Regular.ttf"
+upstream_family = "ABeeZee"
+style = "Regular"
+version = "Version 1.003; ttfautohint (v1.8.3)"
+source_path = "ofl/abeezee/ABeeZee-Regular.ttf"
+source_url = "https://raw.githubusercontent.com/google/fonts/a8bc01c6dcb2933dca0f37180df6c516e226b346/ofl/abeezee/ABeeZee-Regular.ttf"
+sha256 = "2901c8df256648cc2bb2e3afb381cb8d28e65ed3dbe11de20695ae4d5ffdeda9"
+size = 46016
+modifications = "none"

@@ -1,0 +1,39 @@
+name = "Roboto Condensed"
+spdx_license_expression = "Apache-2.0"
+copyright = "Copyright 2011 Google Inc. All Rights Reserved."
+license_text = "LICENSES/RobotoCondensed-Apache-2.0.txt"
+license_text_sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+
+upstream_repository = "https://github.com/google/fonts"
+upstream_revision = "55aaf47ca89416e720a2449368943ff87fb6d02a"
+upstream_revision_role = "immutable provenance input; not a forward dependency pin"
+upstream_license_path = "apache/robotocondensed/LICENSE.txt"
+upstream_license_url = "https://raw.githubusercontent.com/google/fonts/55aaf47ca89416e720a2449368943ff87fb6d02a/apache/robotocondensed/LICENSE.txt"
+upstream_license_sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+
+family_grouping = "The Light face carries the shared typographic family in name ID 16 and its own weight in name ID 1, which is how upstream groups the pair into one family. The runtime patcher suffixes both records, so the pair stays one family with two styles."
+
+[[artifact]]
+key = "roboto-condensed-regular"
+path = "fonts/RobotoCondensed-Regular.ttf"
+upstream_family = "Roboto Condensed"
+style = "Regular"
+version = "Version 2.137; 2017"
+source_path = "apache/robotocondensed/RobotoCondensed-Regular.ttf"
+source_url = "https://raw.githubusercontent.com/google/fonts/55aaf47ca89416e720a2449368943ff87fb6d02a/apache/robotocondensed/RobotoCondensed-Regular.ttf"
+sha256 = "6a2cfb7e61dd09d77526fd314b256894094f96e3a6f3149d9f8000c1132ef4b8"
+size = 170284
+modifications = "none"
+
+[[artifact]]
+key = "roboto-condensed-light"
+path = "fonts/RobotoCondensed-Light.ttf"
+upstream_family = "Roboto Condensed Light"
+upstream_typographic_family = "Roboto Condensed"
+style = "Light"
+version = "Version 2.137; 2017"
+source_path = "apache/robotocondensed/RobotoCondensed-Light.ttf"
+source_url = "https://raw.githubusercontent.com/google/fonts/55aaf47ca89416e720a2449368943ff87fb6d02a/apache/robotocondensed/RobotoCondensed-Light.ttf"
+sha256 = "b766b29053df4c6bfedbdf3cc33284717f835cdf6ca8d137c5106cee9dba68d3"
+size = 168004
+modifications = "none"

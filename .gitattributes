@@ -1,0 +1,5 @@
+# Every file here is either a byte-exact artifact or a record of one, and the
+# licence texts are carried verbatim with their sha256 recorded in
+# THIRD_PARTY/*.toml. End-of-line translation would change those bytes on
+# checkout and break the digests, so nothing in this repository is translated.
+* -text

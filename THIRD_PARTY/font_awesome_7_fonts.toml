@@ -1,0 +1,55 @@
+name = "Font Awesome 7.2.0"
+spdx_license_expression = "OFL-1.1"
+copyright = "Copyright (c) Font Awesome, as the fonts record it. The release's licence file states the notice as: Copyright (c) 2026 Fonticons, Inc. (https://fontawesome.com)"
+license_text = "LICENSES/FontAwesome-7.2.0-OFL-1.1.txt"
+license_text_sha256 = "20c6f40715a567c97b80f6944beb8bb325835cab47ea7dcab89ee3b8e077eced"
+
+distribution_repository = "https://github.com/FortAwesome/Font-Awesome"
+distribution_revision = "337dd2045d5621ce0f8567c33c256f3dedeed55d"
+distribution_revision_role = "immutable provenance input; not a forward dependency pin"
+distribution_archive = "fontawesome-free-7.2.0-desktop.zip"
+distribution_archive_url = "https://github.com/FortAwesome/Font-Awesome/releases/download/7.2.0/fontawesome-free-7.2.0-desktop.zip"
+distribution_archive_sha256 = "5717251cdd7b3f3df989f9fada0ca65b6609045c04a0c1bd78fb27acb3bf84cb"
+upstream_license_path = "fontawesome-free-7.2.0-desktop/LICENSE.txt"
+upstream_license_sha256 = "20c6f40715a567c97b80f6944beb8bb325835cab47ea7dcab89ee3b8e077eced"
+
+[[artifact]]
+key = "font-awesome-7-brands"
+path = "fonts/FontAwesome7Brands-Regular.otf"
+upstream_family = "Font Awesome 7 Brands"
+upstream_typographic_family = "Font Awesome 7 Brands"
+style = "Regular"
+version = "Version 898.00390625 (Font Awesome version: 7.2.0)"
+source_path = "fontawesome-free-7.2.0-desktop/otfs/Font Awesome 7 Brands-Regular-400.otf"
+sha256 = "c294ad465110e7901aed42694065f074b1daa4601f2ed4d09fb19fcbafcedf40"
+size = 215132
+modifications = "none"
+
+[[artifact]]
+key = "font-awesome-7-free-regular"
+path = "fonts/FontAwesome7Free-Regular.otf"
+upstream_family = "Font Awesome 7 Free"
+upstream_typographic_family = "Font Awesome 7 Free"
+style = "Regular"
+version = "Version 898.00390625 (Font Awesome version: 7.2.0)"
+source_path = "fontawesome-free-7.2.0-desktop/otfs/Font Awesome 7 Free-Regular-400.otf"
+sha256 = "9d943a4c4ddb556a21862a008b5b64a8d8aeba982b2faf948bdf8e46ff554c91"
+size = 87340
+modifications = "none"
+
+[[artifact]]
+key = "font-awesome-7-free-solid"
+path = "fonts/FontAwesome7Free-Solid.otf"
+upstream_family = "Font Awesome 7 Free Solid"
+upstream_typographic_family = "Font Awesome 7 Free"
+style = "Regular"
+typographic_style = "Solid"
+version = "Version 898.00390625 (Font Awesome version: 7.2.0)"
+source_path = "fontawesome-free-7.2.0-desktop/otfs/Font Awesome 7 Free-Solid-900.otf"
+sha256 = "8a2db53f7927abee48e52262090d99ced56a22d46752fba13c8f8782ce632d73"
+size = 414664
+modifications = "none"
+family_override_note = "Upstream files this face under the typographic family 'Font Awesome 7 Free', the same name the Regular face above declares. Two files claiming one family entry is the condition this repository exists to avoid, occurring here inside a single upstream release: without a correction the two register as one family and the host is free to resolve either. The override below gives the Solid face its own typographic family before the runtime suffix is appended. vnm_framework already applies exactly this correction to the same file, rewriting name ID 16 to 'Font Awesome 7 Free Solid' in THIRD_PARTY/recipes/prepare_varinomics_embedded_font.py; this carries that shipped correction into the patcher rather than originating one."
+
+[artifact.family_override]
+16 = "Font Awesome 7 Free Solid"

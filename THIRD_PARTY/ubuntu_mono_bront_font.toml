@@ -1,0 +1,36 @@
+name = "Ubuntu Mono - Bront"
+spdx_license_expression = "Ubuntu-font-1.0"
+copyright = "Copyright 2011 Canonical Ltd.  Licensed under the Ubuntu Font Licence 1.0"
+license_text = "LICENSES/Ubuntu-Font-Licence-1.0.txt"
+license_text_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
+
+authorship = "The typeface is Chris Wendt's derivative of Canonical's Ubuntu Mono, distributed by him as 'Ubuntu Mono - Bront'."
+
+upstream_repository = "https://github.com/chrismwendt/bront"
+upstream_revision = "aef23d9a11416655a8351230edb3c2377061c077"
+upstream_revision_role = "immutable provenance input; not a forward dependency pin"
+upstream_contributor = "Chris Wendt (GitHub chrismwendt; author of the pinned upstream commit)"
+contributor_notice = "The pinned upstream files contain no separate contributor copyright statement. The font carries only name IDs 0 to 6, so name ID 0 is the whole of its embedded attribution."
+upstream_license_path = "UbuntuMono-LICENSE.txt"
+upstream_license_url = "https://raw.githubusercontent.com/chrismwendt/bront/aef23d9a11416655a8351230edb3c2377061c077/UbuntuMono-LICENSE.txt"
+upstream_license_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
+
+supersedes = [
+    "vnm_framework rc/UbuntuMonoDerivativeBront-Regular.ttf",
+    "vnm_framework tests/fixtures/remote_surface_text_crispness/UbuntuMonoDerivativeBront-Regular.ttf",
+    "vnm_terminal_surface resources/fonts/UbuntuMonoDerivativeBront-Regular.ttf",
+    "vnm_msdf_text fonts/monospace.ttf",
+]
+supersedes_note = "The first three are one byte-identical file (sha256 2448ba77c08b20151cdfd11da8bc72abc8b84fc46e85785c9a40f1a2a8c0655f), an earlier name-table rewrite of this same upstream input that declares the family 'Ubuntu Mono derivative Bront'. A consumer migrating from those files maps that name to the runtime family this repository's patcher produces. The fourth is the byte-verbatim upstream input itself (sha256 09ea86e719381a9b1aecf7590338b625edd00e9ad74ec2484b94bd35a029010d), vendored under a generic file name; it is the same bytes as the copy here. All four are the same 1304-glyph typeface."
+
+[[artifact]]
+key = "ubuntu-mono-bront"
+path = "fonts/UbuntuMono-Bront.ttf"
+upstream_family = "Ubuntu Mono - Bront"
+style = "Regular"
+version = "Version 0.1"
+source_path = "UbuntuMono-Bront.ttf"
+source_url = "https://raw.githubusercontent.com/chrismwendt/bront/aef23d9a11416655a8351230edb3c2377061c077/UbuntuMono-Bront.ttf"
+sha256 = "09ea86e719381a9b1aecf7590338b625edd00e9ad74ec2484b94bd35a029010d"
+size = 195252
+modifications = "none"

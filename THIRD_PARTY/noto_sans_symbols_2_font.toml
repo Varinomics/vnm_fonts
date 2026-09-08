@@ -1,0 +1,37 @@
+name = "Noto Sans Symbols 2"
+spdx_license_expression = "OFL-1.1"
+copyright = "Copyright 2022 The Noto Project Authors (https://github.com/notofonts/symbols)"
+license_text = "LICENSES/NotoSansSymbols2-OFL-1.1.txt"
+license_text_sha256 = "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0"
+
+upstream_repository = "https://github.com/notofonts/symbols"
+upstream_license_path = "ofl/notosanssymbols2/OFL.txt"
+upstream_license_url = "https://raw.githubusercontent.com/google/fonts/7b6724ac7ececc713e9ba93af309f7520c9a80a3/ofl/notosanssymbols2/OFL.txt"
+upstream_license_sha256 = "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0"
+upstream_license_note = "The family's own OFL, byte-identical to the OFL.txt in the notofonts/symbols release NotoSansSymbols2-v2.008."
+
+source_provenance_class = "cdn_build"
+source_provenance_note = "This is the one face whose bytes are not a git-addressable object. They are a Google Fonts CDN build: content-addressed, immutable while the family stays at v25, and gone when Google republishes. vnm_framework recorded no source URL for this file, so the file it vendored was taken as the input and the chain below is what could be established about it."
+source_cdn_url = "https://fonts.gstatic.com/s/notosanssymbols2/v25/I_uyMoGduATTei9eI8daxVHDyfisHr71ypPqfX71-AI.ttf"
+source_cdn_discovery = "The URL is listed under manifest.fileRefs in the JSON at https://fonts.google.com/download/list?family=Noto%20Sans%20Symbols%202, whose body is prefixed by a five-byte XSSI guard."
+source_verification = "Downloaded from the CDN URL above and confirmed byte-identical to vnm_framework/rc/NotoSansSymbols2-Regular.ttf, the file this repository inherited."
+
+build_repository = "https://github.com/google/fonts"
+build_revision = "7b6724ac7ececc713e9ba93af309f7520c9a80a3"
+build_revision_role = "immutable provenance input; the design and version the CDN build was compiled from, not the byte stream itself"
+build_path = "ofl/notosanssymbols2/NotoSansSymbols2-Regular.ttf"
+build_sha256 = "7d5fb73b7ca67a6798101741f5d280a3d016a56a197afcd4199dbb57b4b82a21"
+build_size = 1233128
+build_relationship = "The CDN stream is a fontTools recompile of this file: same name table, head timestamps, fontRevision and 2976 glyphs; glyf, loca, GPOS, GSUB, cmap, head and name are re-packed while OS/2, hmtx, post, cvt, fpgm, prep, gasp, hhea, vhea and vmtx are bit-identical. The repository file is itself byte-identical to NotoSansSymbols2/googlefonts/ttf/NotoSansSymbols2-Regular.ttf in the notofonts/symbols release NotoSansSymbols2-v2.008."
+build_alternatives_ruled_out = "google/fonts at v2.007 (4eebd9267361d76e55249dbbd2017adb9a3c7b450b73a78c0556b47fb2df047e), v2.006 (efa10dce4b1848679795bacbcabbd1bf4af16d70b40288e399ffc5d43aad0c1c) and v2.005 (690f85a54d026a549d5d54f8c9e0da534db4cbc98a3e8f4db06a47e4ddf440d9); the full, hinted and unhinted builds in the symbols v2.008 release; and every notofonts.github.io blob under fonts/NotoSansSymbols2. None matches."
+
+[[artifact]]
+key = "noto-sans-symbols-2"
+path = "fonts/NotoSansSymbols2-Regular.ttf"
+upstream_family = "Noto Sans Symbols 2"
+style = "Regular"
+version = "Version 2.008; ttfautohint (v1.8.4.7-5d5b)"
+source_url = "https://fonts.gstatic.com/s/notosanssymbols2/v25/I_uyMoGduATTei9eI8daxVHDyfisHr71ypPqfX71-AI.ttf"
+sha256 = "f67f40c65f929f029827ab37cfdc4897dfd9ae3c28d9e98ba46e0d52e39eb97e"
+size = 1228868
+modifications = "none"

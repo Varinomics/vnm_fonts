@@ -1,0 +1,26 @@
+name = "Font Awesome 4.7.0"
+spdx_license_expression = "OFL-1.1"
+copyright = "Copyright Dave Gandy 2016. All rights reserved."
+license_text = "LICENSES/OFL-1.1.txt"
+license_text_sha256 = "8a0d411f28e5b2fe46fb65efb9f0d4afb1cbc1dc85ac9db4cf0dd54d796e5de6"
+license_text_note = "The 4.7.0 tree ships no licence file of its own; the only licence-named paths at the pinned revision are the project website's src/license.html and src/3.2.1/license/. Its README is the licence declaration, so the unmodified SIL OFL 1.1 text is carried instead."
+
+upstream_repository = "https://github.com/FortAwesome/Font-Awesome"
+upstream_revision = "a8386aae19e200ddb0f6845b5feeee5eb7013687"
+upstream_revision_role = "immutable provenance input; not a forward dependency pin"
+upstream_license_path = "README.md"
+upstream_license_url = "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/a8386aae19e200ddb0f6845b5feeee5eb7013687/README.md"
+upstream_license_sha256 = "610427fe917f2b51ef69b5bfa9a7bfe3fcba59b1ccaf86a500a47e5fa1da322b"
+upstream_license_declaration = "The Font Awesome font is licensed under the SIL OFL 1.1: http://scripts.sil.org/OFL"
+
+[[artifact]]
+key = "font-awesome-4"
+path = "fonts/FontAwesome.otf"
+upstream_family = "FontAwesome"
+style = "Regular"
+version = "Version 4.7.0 2016"
+source_path = "fonts/FontAwesome.otf"
+source_url = "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/a8386aae19e200ddb0f6845b5feeee5eb7013687/fonts/FontAwesome.otf"
+sha256 = "444dd4366615ffc4a16d012b2fa90137065d3ccb410fa6fd5e4ddd7b5e4ffcd5"
+size = 134808
+modifications = "none"

@@ -1,0 +1,30 @@
+name = "JuliaMono"
+spdx_license_expression = "OFL-1.1"
+copyright = "Copyright 2020 - 2026 The JuliaMono Project Authors (https://github.com/cormullion/juliamono)"
+license_text = "LICENSES/JuliaMono-OFL-1.1.txt"
+license_text_sha256 = "bae3beff9e15f1a680c2764c4bbdb25b995b9bf539aeaf8467482a495c75ad0c"
+
+upstream_repository = "https://github.com/cormullion/juliamono"
+upstream_revision = "0dfc749503778730d6af79183a17fcde668ae626"
+upstream_revision_tag = "v0.63.2"
+upstream_revision_role = "immutable provenance input; not a forward dependency pin"
+upstream_license_path = "LICENSE"
+upstream_license_url = "https://raw.githubusercontent.com/cormullion/juliamono/0dfc749503778730d6af79183a17fcde668ae626/LICENSE"
+upstream_license_sha256 = "bae3beff9e15f1a680c2764c4bbdb25b995b9bf539aeaf8467482a495c75ad0c"
+
+used_for = "the two furniture keycap marks no Android font stack covers, U+232B on Backspace and U+21B5 on Return"
+supersedes = ["vnm_keyboard third_party/juliamono/JuliaMono-Regular.ttf"]
+supersedes_note = "vnm_keyboard vendors the same upstream file byte-verbatim, so the copy here is the same bytes."
+
+[[artifact]]
+key = "juliamono"
+path = "fonts/JuliaMono-Regular.ttf"
+upstream_family = "JuliaMono"
+upstream_typographic_family = "JuliaMono"
+style = "Regular"
+version = "v0.63.2; ttfautohint (v1.8.4)"
+source_path = "JuliaMono-Regular.ttf"
+source_url = "https://raw.githubusercontent.com/cormullion/juliamono/0dfc749503778730d6af79183a17fcde668ae626/JuliaMono-Regular.ttf"
+sha256 = "40a07da0d1601215eb6b89312eb44128a3e2f36675d3e1f518264bd391fc7023"
+size = 3261260
+modifications = "none"
