@@ -504,9 +504,36 @@ Registered_font register_marked_font(const QByteArray& font_bytes, const Family_
 
 namespace {
 
-// The one place a shipped font's resource path and family override are written
-// down. A consumer that repeated either would be one forgotten override away
-// from merging two families, which is the defect this library removes.
+Registered_font register_unmarked_font(const QByteArray& font_bytes,
+                                       const QString& expected_family)
+{
+    Registered_font registered;
+    registered.font_id = QFontDatabase::addApplicationFontFromData(font_bytes);
+    if (registered.font_id < 0) {
+        registered.error = QStringLiteral("The font database refused the shipped font %1.")
+                               .arg(expected_family);
+        return registered;
+    }
+
+    const QStringList families = QFontDatabase::applicationFontFamilies(registered.font_id);
+    if (!families.contains(expected_family)) {
+        QFontDatabase::removeApplicationFont(registered.font_id);
+        registered.font_id = -1;
+        registered.error   = QStringLiteral(
+                                 "The shipped font declares the family %1, but the font database "
+                                 "reported %2.")
+                                 .arg(expected_family, families.join(QStringLiteral(", ")));
+        return registered;
+    }
+
+    registered.family = expected_family;
+    return registered;
+}
+
+// The one place a shipped font's resource path and registration behavior are
+// written down. A consumer that repeated either would be one forgotten
+// override away from merging two families, which is the defect this library
+// removes.
 //
 // An override name ID of zero means the font needs none: zero is the copyright
 // record, which is never a family name, so it cannot be mistaken for one.
@@ -516,6 +543,8 @@ struct Shipped_font_entry
     const char*  resource_path;
     quint16      override_name_id;
     const char*  override_value;
+    bool         mark_family = true;
+    const char*  expected_family = nullptr;
 };
 
 constexpr Shipped_font_entry k_shipped_fonts[] = {
@@ -540,8 +569,9 @@ constexpr Shipped_font_entry k_shipped_fonts[] = {
      ":/vnm_fonts/JuliaMono-Regular.ttf",           0,  nullptr},
     {Shipped_font::ABEEZEE,
      ":/vnm_fonts/ABeeZee-Regular.ttf",             0,  nullptr},
-    {Shipped_font::UBUNTU_MONO_BRONT,
-     ":/vnm_fonts/UbuntuMono-Bront.ttf",            0,  nullptr},
+    {Shipped_font::UBUNTU_SANS_MONO_DERIVATIVE_VNM_REGULAR,
+     ":/vnm_fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf", 0, nullptr,
+     false, "Ubuntu Sans Mono derivative vnm"},
     {Shipped_font::JETBRAINS_MONO,
      ":/vnm_fonts/JetBrainsMono-Regular.ttf",       0,  nullptr},
     {Shipped_font::FIRA_CODE,
@@ -604,7 +634,10 @@ Registered_font register_shipped_font(Shipped_font font)
         overrides.insert(entry->override_name_id, QString::fromLatin1(entry->override_value));
     }
 
-    registered = register_marked_font(file.readAll(), overrides);
+    const QByteArray font_bytes = file.readAll();
+    registered = entry->mark_family
+        ? register_marked_font(font_bytes, overrides)
+        : register_unmarked_font(font_bytes, QString::fromLatin1(entry->expected_family));
     if (registered.is_valid()) {
         registration_cache().insert(cache_key, registered);
     }

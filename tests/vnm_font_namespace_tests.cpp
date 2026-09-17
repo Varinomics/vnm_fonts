@@ -2,9 +2,9 @@
 //
 //   1. Before any shipped font is registered, no marked family is present. That
 //      is the assertion that would have caught the original defect.
-//   2. Each shipped font registers under exactly one family, that family
-//      carries the mark, and the font database resolves it to itself rather
-//      than substituting another face.
+//   2. Each marked shipped font registers under exactly one marked family, and
+//      the font database resolves it to itself rather than substituting another
+//      face. The derivative shipped face keeps its published family name.
 //   3. Each marked family appears exactly once in the font database.
 //   4. The patch changes only the name table.
 //   5. The two Roboto faces form one family with two styles, and the two Font
@@ -76,7 +76,6 @@ std::vector<Font_case> font_cases()
         {QStringLiteral("ABeeZee-Regular.ttf"),            QStringLiteral("ABeeZee (vnm)"),                  {}},
         {QStringLiteral("JetBrainsMono-Regular.ttf"),      QStringLiteral("JetBrains Mono (vnm)"),           {}},
         {QStringLiteral("FiraCode-Regular.ttf"),           QStringLiteral("Fira Code (vnm)"),                {}},
-        {QStringLiteral("UbuntuMono-Bront.ttf"),           QStringLiteral("Ubuntu Mono - Bront (vnm)"),      {}},
     };
 }
 
@@ -146,6 +145,31 @@ void check_family_grouping(const QString& family, const QStringList& expected_st
     }
 }
 
+void check_derivative_shipped_registration()
+{
+    const QString expected_family = QStringLiteral("Ubuntu Sans Mono derivative vnm");
+    const vnm_fonts::Registered_font registered =
+        vnm_fonts::register_shipped_font(
+            vnm_fonts::Shipped_font::UBUNTU_SANS_MONO_DERIVATIVE_VNM_REGULAR);
+    check(registered.is_valid(),
+          QStringLiteral("derivative shipped font: %1").arg(registered.error));
+    if (!registered.is_valid()) {
+        return;
+    }
+
+    check(registered.family == expected_family,
+          QStringLiteral("derivative registered as %1, expected %2")
+              .arg(registered.family, expected_family));
+    check(!registered.family.endsWith(QString::fromLatin1(vnm_fonts::k_family_mark)),
+          QStringLiteral("derivative family unexpectedly carries the vnm mark"));
+    check(QFontDatabase::families().contains(expected_family),
+          QStringLiteral("the derivative family is not in the font database"));
+    const QFontInfo info((QFont(expected_family)));
+    check(info.family() == expected_family,
+          QStringLiteral("the derivative resolved to %1, not its published family")
+              .arg(info.family()));
+}
+
 }
 
 int main(int argc, char** argv)
@@ -212,6 +236,8 @@ int main(int argc, char** argv)
     check(QFontDatabase::families().contains(QStringLiteral("Font Awesome 7 Free (vnm)")) &&
               QFontDatabase::families().contains(QStringLiteral("Font Awesome 7 Free Solid (vnm)")),
           QStringLiteral("both Font Awesome 7 Free families must be registered separately"));
+
+    check_derivative_shipped_registration();
 
     if (s_failures > 0) {
         std::fprintf(stderr, "%d check(s) failed.\n", s_failures);

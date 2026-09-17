@@ -5,7 +5,8 @@
 //   1. The resource initialiser makes ":/vnm_fonts/..." readable from a target
 //      that merely links the static library. Without it the linker is free to
 //      discard the generated resource initialiser and the fonts vanish.
-//   2. Every shipped font registers by id and comes back with a marked family.
+//   2. Every shipped font registers by id and comes back with its documented
+//      family, with the derivative retaining its published unmarked name.
 //   3. Registering the same font twice returns the first registration rather
 //      than registering the bytes again.
 //   4. The Font Awesome 7 Free pair lands in two families, which is the case
@@ -50,7 +51,7 @@ std::vector<vnm_fonts::Shipped_font> every_shipped_font()
         Shipped_font::NOTO_SANS_SYMBOLS_2,
         Shipped_font::JULIAMONO,
         Shipped_font::ABEEZEE,
-        Shipped_font::UBUNTU_MONO_BRONT,
+        Shipped_font::UBUNTU_SANS_MONO_DERIVATIVE_VNM_REGULAR,
         Shipped_font::JETBRAINS_MONO,
         Shipped_font::FIRA_CODE,
     };
@@ -80,8 +81,16 @@ int main(int argc, char** argv)
                        .arg(static_cast<int>(font)).arg(registered.error))) {
             continue;
         }
-        check(registered.family.endsWith(mark),
-              QStringLiteral("%1 does not carry the mark").arg(registered.family));
+        if (font == vnm_fonts::Shipped_font::UBUNTU_SANS_MONO_DERIVATIVE_VNM_REGULAR) {
+            check(registered.family == QStringLiteral("Ubuntu Sans Mono derivative vnm"),
+                  QStringLiteral("the derivative registered as %1, not under its published name")
+                      .arg(registered.family));
+            check(!registered.family.endsWith(mark),
+                  QStringLiteral("the derivative family unexpectedly carries the vnm mark"));
+        } else {
+            check(registered.family.endsWith(mark),
+                  QStringLiteral("%1 does not carry the mark").arg(registered.family));
+        }
         check(QFontDatabase::families().contains(registered.family),
               QStringLiteral("%1 is not in the font database").arg(registered.family));
 
@@ -98,8 +107,8 @@ int main(int argc, char** argv)
         families.insert(registered.family);
     }
 
-    // The two Roboto weights deliberately share one family, so twelve fonts make
-    // eleven families. Anything fewer means two faces merged.
+    // The two Roboto weights deliberately share one family, so twelve fonts
+    // make eleven families. Anything fewer means two faces merged.
     check(families.size() == 11,
           QStringLiteral("the shipped fonts registered %1 families, expected 11: %2")
               .arg(families.size())

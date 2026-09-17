@@ -51,7 +51,7 @@ if(NOT IS_DIRECTORY ${cached_VNM_FONTS_DIRECTORY})
     message(FATAL_ERROR
         "VNM_FONTS_DIRECTORY is ${cached_VNM_FONTS_DIRECTORY}, which is not a directory.")
 endif()
-foreach(font RobotoCondensed-Regular.ttf FontAwesome7Free-Solid.otf UbuntuMono-Bront.ttf)
+foreach(font RobotoCondensed-Regular.ttf FontAwesome7Free-Solid.otf UbuntuSansMonoDerivativeVnm-Regular.ttf)
     if(NOT EXISTS ${cached_VNM_FONTS_DIRECTORY}/${font})
         message(FATAL_ERROR
             "VNM_FONTS_DIRECTORY does not contain ${font}, so it is not the shipped set.")

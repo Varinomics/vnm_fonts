@@ -1,0 +1,32 @@
+name = "Ubuntu Sans Mono derivative vnm"
+spdx_license_expression = "Ubuntu-font-1.0"
+copyright = "Copyright 2011, 2022, 2023 Canonical Ltd. Licensed under the Ubuntu Font Licence 1.0. Bront modifications by Chris Wendt; vnm derivative 2026."
+license_text = "LICENSES/Ubuntu-Font-Licence-1.0.txt"
+license_text_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
+
+authorship = "Varinomics derivative of Canonical's Ubuntu Sans Mono v1.100 and Chris Wendt's Ubuntu Mono - Bront."
+upstream_repository = "https://github.com/canonical/Ubuntu-Sans-Mono-fonts"
+upstream_revision = "c57353c1772eb8aaab9c539e3d42c971a03a5fcd"
+upstream_revision_role = "immutable Ubuntu Sans Mono source input; not a forward dependency pin"
+upstream_contributor = "Chris Wendt (GitHub chrismwendt; Bront source contributor)"
+upstream_contributor_repository = "https://github.com/chrismwendt/bront"
+upstream_contributor_revision = "aef23d9a11416655a8351230edb3c2377061c077"
+upstream_license_path = "Ubuntu-Font-Licence.txt"
+upstream_license_url = "https://raw.githubusercontent.com/chrismwendt/bront/aef23d9a11416655a8351230edb3c2377061c077/UbuntuMono-LICENSE.txt"
+upstream_license_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
+
+distribution_repository = "https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm"
+distribution_release = "v0.1.2"
+source_provenance_note = "The shipped bytes are the locally built static Regular output from the derivative project. The build report identifies the Ubuntu Sans Mono v1.100 source, the Bront source, the Ubuntu Font Licence input and the derivative builder version 0.1.2."
+
+[[artifact]]
+key = "ubuntu-sans-mono-derivative-vnm-regular"
+path = "fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf"
+upstream_family = "Ubuntu Sans Mono derivative vnm"
+style = "Regular"
+version = "Version 1.103; vnm 0.1.2; upstream 1.100"
+source_path = "build/UbuntuSansMonoDerivativeVnm-Regular.ttf"
+source_url = "https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm/releases/download/v0.1.2/UbuntuSansMonoDerivativeVnm-Regular.ttf"
+sha256 = "7c43ef1e20e2fa3d7c7d95805965ee453cc05b3fddc8ea5745c52ecbf07e7e25"
+size = 139428
+modifications = "none"

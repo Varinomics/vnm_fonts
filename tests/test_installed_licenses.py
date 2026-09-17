@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Installs this repository into a staging directory and asserts the licences
-# arrived. All ten shipped faces are OFL-1.1, Apache-2.0 or the Ubuntu Font
+# arrived. All twelve shipped faces are OFL-1.1, Apache-2.0 or the Ubuntu Font
 # Licence, and every one of those requires the licence and copyright notice to
 # accompany copies. A product that ships the fonts and not the texts is the
 # failure this checks for, and it is the state the consumer repositories were

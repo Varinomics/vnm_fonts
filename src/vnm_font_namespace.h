@@ -1,6 +1,7 @@
 #pragma once
 
-// Registers a shipped font under a family name unique to this process.
+// Registers shipped fonts under family names isolated to this process, except
+// for the derivative face whose published family name is already unique.
 //
 // The files in fonts/ are byte-verbatim upstream releases and declare the
 // family names their authors gave them. A font the user has installed can
@@ -31,7 +32,7 @@
 
 namespace vnm_fonts {
 
-// The mark appended to every family name this library registers.
+// The mark appended to every family name this library isolates.
 constexpr const char* k_family_mark = " (vnm)";
 
 // Base values substituted before the mark is appended, keyed by name ID. They
@@ -42,7 +43,7 @@ constexpr const char* k_family_mark = " (vnm)";
 using Family_override = QMap<quint16, QString>;
 
 // The fonts this library carries, one per file in fonts/. The resource path and
-// the family override of each are resolved inside the library, so a consumer
+// registration behavior of each are resolved inside the library, so a consumer
 // never repeats either.
 enum class Shipped_font
 {
@@ -55,7 +56,7 @@ enum class Shipped_font
     NOTO_SANS_SYMBOLS_2,
     JULIAMONO,
     ABEEZEE,
-    UBUNTU_MONO_BRONT,
+    UBUNTU_SANS_MONO_DERIVATIVE_VNM_REGULAR,
     JETBRAINS_MONO,
     FIRA_CODE,
 };
@@ -114,7 +115,7 @@ Registered_font register_marked_font(
 void initialize_resources();
 
 // Registers one of the fonts this library carries, resolving its resource path
-// and its family override from the one table that holds them. Registering the
+// and registration behavior from the one table that holds them. Registering the
 // same font twice in a process returns the family the first call produced
 // rather than registering the bytes again.
 Registered_font register_shipped_font(Shipped_font font);

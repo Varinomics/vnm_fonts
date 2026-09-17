@@ -7,12 +7,14 @@ repository is modified: every record in `THIRD_PARTY/*.toml` says
 URL, digest and size, and `tests/test_font_manifest.py` checks each file against
 its record.
 
-The family name a font registers under is patched in memory at load time by
+Family names that need isolation are patched in memory at load time by
 `src/vnm_font_namespace.cpp`, which appends a mark so the family cannot collide
 with a font the user has installed. Two files declaring one family name merge
 into a single family entry, after which glyph lookup and rasterisation can be
 served from different files and produce systematically wrong glyphs; `README.md`
-records the measured case. That patch exists only in the running process, and it
+records the measured case. The Ubuntu Sans Mono derivative vnm face is the
+deliberate exception because its published family name is already
+derivative-specific. The patch exists only in the running process, and it
 touches only the `name` table.
 
 | Upstream family | File | Upstream project |
@@ -26,7 +28,7 @@ touches only the `name` table.
 | Noto Sans Symbols 2 | `NotoSansSymbols2-Regular.ttf` | Noto |
 | JuliaMono | `JuliaMono-Regular.ttf` | JuliaMono |
 | ABeeZee | `ABeeZee-Regular.ttf` | ABeeZee |
-| Ubuntu Mono - Bront | `UbuntuMono-Bront.ttf` | Bront |
+| Ubuntu Sans Mono derivative vnm | `UbuntuSansMonoDerivativeVnm-Regular.ttf` | Varinomics derivative |
 
 ## Roboto Condensed
 
@@ -114,7 +116,7 @@ Details in `THIRD_PARTY/font_awesome_7_fonts.toml`.
 
 Shipped file:
 
-- `fonts/NotoSansSymbols2-Regular.ttf` — version 2.008.
+- `fonts/NotoSansSymbols2-Regular.ttf`, version 2.008.
 
 License: SIL Open Font License 1.1.
 Local license text: `LICENSES/NotoSansSymbols2-OFL-1.1.txt`, the family's own
@@ -139,7 +141,7 @@ that were ruled out.
 
 Shipped file:
 
-- `fonts/JuliaMono-Regular.ttf` — v0.63.2.
+- `fonts/JuliaMono-Regular.ttf`, v0.63.2.
 
 License: SIL Open Font License 1.1.
 Local license text: `LICENSES/JuliaMono-OFL-1.1.txt`.
@@ -162,7 +164,7 @@ Details in `THIRD_PARTY/juliamono_font.toml`.
 
 Shipped file:
 
-- `fonts/ABeeZee-Regular.ttf` — version 1.003.
+- `fonts/ABeeZee-Regular.ttf`, version 1.003.
 
 License: SIL Open Font License 1.1.
 Local license text: `LICENSES/ABeeZee-OFL-1.1.txt`.
@@ -181,35 +183,40 @@ Source:
 
 Details in `THIRD_PARTY/abeezee_font.toml`.
 
-## Ubuntu Mono - Bront
+## Ubuntu Sans Mono derivative vnm
 
 Shipped file:
 
-- `fonts/UbuntuMono-Bront.ttf` — version 0.1.
+- `fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf`, version 1.103, derivative version 0.1.2.
 
-The typeface is Chris Wendt's derivative of Canonical's Ubuntu Mono, distributed
-by him as `Ubuntu Mono - Bront`. The file here is his, unmodified.
+The typeface is a Varinomics derivative of Canonical's Ubuntu Sans Mono v1.100
+and Chris Wendt's Ubuntu Mono - Bront. The byte-verbatim file includes the
+terminal and keyboard symbols added by the derivative project, including the
+directional arrows and Powerline symbols.
 
 License: Ubuntu Font Licence 1.0.
 Local license text: `LICENSES/Ubuntu-Font-Licence-1.0.txt`.
 
 Copyright notice carried in the font:
 
-- Copyright 2011 Canonical Ltd. Licensed under the Ubuntu Font Licence 1.0.
+- Copyright 2011, 2022, 2023 Canonical Ltd. Licensed under the Ubuntu Font Licence 1.0. Bront modifications by Chris Wendt; vnm derivative 2026.
 
-Upstream contributor:
+Source and provenance:
 
-- Chris Wendt (`chrismwendt`), the author of the pinned upstream commit. The
-  pinned upstream files contain no separate contributor copyright statement.
-
-Source:
-
-- https://github.com/chrismwendt/bront
-- Revision aef23d9a11416655a8351230edb3c2377061c077
-- https://raw.githubusercontent.com/chrismwendt/bront/aef23d9a11416655a8351230edb3c2377061c077/UbuntuMono-Bront.ttf
+- https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm
+- Release v0.1.2
+- https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm/releases/download/v0.1.2/UbuntuSansMonoDerivativeVnm-Regular.ttf
+- https://github.com/canonical/Ubuntu-Sans-Mono-fonts
+- Ubuntu Sans Mono source revision c57353c1772eb8aaab9c539e3d42c971a03a5fcd
+- Bront source revision aef23d9a11416655a8351230edb3c2377061c077
+- Output SHA-256 7c43ef1e20e2fa3d7c7d95805965ee453cc05b3fddc8ea5745c52ecbf07e7e25
 - https://ubuntu.com/legal/font-licence
 
-Details in `THIRD_PARTY/ubuntu_mono_bront_font.toml`.
+The output is a locally built static Regular font from the derivative project.
+The build report records the source inputs, the licence input, the added
+symbols and the derivative builder version.
+
+Details in `THIRD_PARTY/ubuntu_sans_mono_derivative_vnm_font.toml`.
 
 ## JetBrains Mono
 

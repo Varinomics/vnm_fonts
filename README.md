@@ -1,14 +1,13 @@
 # vnm_fonts
 
 The fonts Varinomics products ship, byte-verbatim as their authors published
-them, plus the library that registers them under a family name unique to the
-running process.
+them, plus the library that isolates their family names where necessary.
 
 ```
 fonts/         the shipped files, byte-identical to upstream
 LICENSES/      the licence text of every upstream family
 THIRD_PARTY/   the provenance manifest for every file
-src/           the library that marks a family name at load time (needs Qt)
+src/           the library that registers family names at load time (needs Qt)
 vnm_fonts.qrc  the resource that carries the twelve files into a process
 tests/         the gates
 ```
@@ -46,13 +45,13 @@ verbatim bytes are exactly the failure above. The marking is the point.
 | Contract | What it gives you | Needs Qt |
 |---|---|---|
 | File | `VNM_FONTS_DIRECTORY`, the manifest, the licences | no |
-| Library | `vnm::fonts`, which registers a font under a marked family | yes |
+| Library | `vnm::fonts`, which registers shipped fonts under isolated families | yes |
 
 `find_package(Qt6 ...)` here is **QUIET, not REQUIRED**, so adding this
 repository to a project on a machine with no Qt configures normally: you get
 the file contract, and `vnm::fonts` is simply not defined. A consumer that
 links `vnm::fonts` anyway fails on its own `target_link_libraries` line naming
-that target, with the explanation directly above it in the configure log —
+that target, with the explanation directly above it in the configure log:
 rather than failing inside a repository it only wanted a file path from.
 `VNM_FONTS_LIBRARY_AVAILABLE` says which contract you have.
 
@@ -92,7 +91,7 @@ first.
 
 The family that comes back is the one the font's own name table declares. Do not
 read `QFontDatabase::applicationFontFamilies()` and choose among the results
-yourself — a real font engine reports several families for one face, and picking
+yourself, because a real font engine reports several families for one face, and picking
 the first, the longest or the only one is wrong in a different way each time.
 See "One face, several reported families" below.
 
@@ -134,13 +133,17 @@ have to populate the checkout without configuring it.
 
 It also costs nothing when Qt *is* present. The library target is
 `EXCLUDE_FROM_ALL`, so a consumer that links nothing from it builds neither the
-library nor the generated resource — which is around 29 MB of source, all twelve
+library nor the generated resource, which is around 29 MB of source, all twelve
 fonts embedded, and would otherwise be compiled on every build to be linked by
 nobody. `vnm::fonts` is still built on demand for anything that links it, so Qt
 consumers need no change. Measured: a file-only consumer's build tree contains
 its own objects and nothing of this repository's.
 
 Do not "fix" that later by routing those two through the patcher.
+
+The Ubuntu Sans Mono derivative vnm face is the deliberate exception. Its
+published family name is already derivative-specific, so the shipped registry
+preserves that exact name instead of appending the process mark.
 
 ### Redistributing the fonts means redistributing the licences
 
@@ -160,7 +163,7 @@ Two things a consumer may have to do:
 
 - **Packaging from named CPack components.** `CPACK_COMPONENTS_ALL` silently
   drops every component not listed, so set `VNM_FONTS_INSTALL_COMPONENT` to your
-  own runtime component — `vnm_terminal`, for one, packages only
+  own runtime component, `vnm_terminal`, for one, packages only
   `vnm_terminal_runtime`. The default is `vnm_fonts_licenses`.
 - **Packaging that copies files itself** rather than running `cmake --install`.
   `VNM_FONTS_LICENSE_FILES`, `VNM_FONTS_NOTICES_FILE` and
@@ -168,8 +171,8 @@ Two things a consumer may have to do:
   the destination this repository uses.
 
 **Do not add this repository with `add_subdirectory(... EXCLUDE_FROM_ALL)`.**
-That form discards a subdirectory's install rules outright — measured on CMake
-3.30 — so the fonts ship and the licences do not, with nothing in the output to
+That form discards a subdirectory's install rules outright, as measured on CMake
+3.30, so the fonts ship and the licences do not, with nothing in the output to
 say anything was dropped. The configure warns if you do it anyway. This is
 unrelated to the `EXCLUDE_FROM_ALL` on the library *target*, which is a
 different property and affects no install rule.
@@ -177,18 +180,18 @@ different property and affects no install rule.
 ### Being included more than once
 
 logonomic reaches this repository through several dependency paths in one
-configure — the framework, the terminal, the terminal surface, the plot, the
+configure, the framework, the terminal, the terminal surface, the plot, the
 MSDF text renderer and the keyboard. Adding it twice is ordinary: the CMake
-returns early on a global property — not on the library target, which does not
-exist in a Qt-free configure — and it never `FORCE`s `VNM_FONTS_DIRECTORY`, so a
+returns early on a global property, not on the library target, which does not
+exist in a Qt-free configure, and it never `FORCE`s `VNM_FONTS_DIRECTORY`, so a
 consumer that set that variable itself keeps its value.
 `tests/repeated_inclusion` is the gate on both.
 
 ## What the marking does
 
 The files in `fonts/` are byte-verbatim, so nothing this repository
-redistributes differs from what upstream published. The family name is patched
-in memory on the way into the font database.
+redistributes differs from what upstream published. Family names that need
+isolation are patched in memory on the way into the font database.
 
 | Name ID | Treatment |
 |---|---|
@@ -224,15 +227,15 @@ Three separate causes, all of them normal:
   family name (name ID 1) when the two differ. That is why Light reports both
   `Roboto Condensed (vnm)` and `Roboto Condensed Light (vnm)`.
 - **DirectWrite derives a width-stripped family.** `Roboto (vnm)` appears in no
-  record of the file — it is `Roboto Condensed (vnm)` with the width token
+  record of the file: it is `Roboto Condensed (vnm)` with the width token
   removed. Verified by searching the marked bytes: the string does not occur
   there. Nothing in the name table can prevent this.
 - A family is reported once per name record, so a face carrying name ID 16 on
   both the Macintosh and Windows platforms is reported twice.
 
 So the count carries no information and neither does position. The library
-returns the family the name table declares — name ID 16 where the face has one,
-otherwise name ID 1 — after asserting it is among those reported, and that every
+returns the family the name table declares, name ID 16 where the face has one,
+otherwise name ID 1, after asserting it is among those reported, and that every
 reported family carries the mark. An unmarked one is still a hard failure,
 because it could collide with a font the user has installed.
 
@@ -262,7 +265,7 @@ families, and the consumer gate asserts that count.
 | `NotoSansSymbols2-Regular.ttf` | Noto Sans Symbols 2 | `Noto Sans Symbols 2 (vnm)` |
 | `JuliaMono-Regular.ttf` | JuliaMono | `JuliaMono (vnm)` |
 | `ABeeZee-Regular.ttf` | ABeeZee | `ABeeZee (vnm)` |
-| `UbuntuMono-Bront.ttf` | Ubuntu Mono - Bront | `Ubuntu Mono - Bront (vnm)` |
+| `UbuntuSansMonoDerivativeVnm-Regular.ttf` | Ubuntu Sans Mono derivative vnm | `Ubuntu Sans Mono derivative vnm` |
 | `JetBrainsMono-Regular.ttf` | JetBrains Mono | `JetBrains Mono (vnm)` |
 | `FiraCode-Regular.ttf` | Fira Code | `Fira Code (vnm)` |
 
@@ -279,10 +282,10 @@ ctest --test-dir <build>               # all four
 
 | Gate | What it proves |
 |---|---|
-| `vnm_font_namespace` | Marking changes only the `name` table; each font registers under one marked family that the database resolves to itself and that appears exactly once; the Roboto pair is one family, the Font Awesome 7 Free pair is two. |
-| `vnm_fonts_consumer` | The resource is reachable from a target that merely links the library; all twelve register by id into eleven families; a second registration returns the first. |
+| `vnm_font_namespace` | Marking changes only the `name` table; marked fonts register under isolated families, the derivative keeps its published family name, and the database resolves each to itself; the Roboto pair is one family, the Font Awesome 7 Free pair is two. |
+| `vnm_fonts_consumer` | The resource is reachable from a target that merely links the library; all twelve register by id into eleven families; the derivative keeps its published family name; a second registration returns the first. |
 | `vnm_fonts_repeated_inclusion` | Adding this repository twice configures, and `VNM_FONTS_DIRECTORY` is not overwritten. |
-| `vnm_fonts_file_only_consumer` | A project that adds this repository and links nothing from it builds neither the library nor its resource — the library target stays `EXCLUDE_FROM_ALL`. |
+| `vnm_fonts_file_only_consumer` | A project that adds this repository and links nothing from it builds neither the library nor its resource, and the library target stays `EXCLUDE_FROM_ALL`. |
 | `vnm_fonts_without_qt` | The file contract survives a configure with Qt disabled: it succeeds, `VNM_FONTS_DIRECTORY` points at the shipped set, the manifest test is registered and passes, and no Qt-dependent test is registered. |
 | `vnm_fonts_manifest` | Every shipped file matches its recorded digest and size, every file is described by exactly one record, and the notices cover every revision, URL and licence. |
 | `vnm_fonts_installed_licenses` | `cmake --install` puts every licence text the manifests name into `share/doc/vnm_fonts/` with its recorded digest, along with the notices. |
