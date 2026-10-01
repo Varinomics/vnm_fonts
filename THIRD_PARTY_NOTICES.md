@@ -187,12 +187,16 @@ Details in `THIRD_PARTY/abeezee_font.toml`.
 
 Shipped file:
 
-- `fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf`, version 1.103, derivative version 0.1.2.
+- `fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf`, version 1.104, derivative version 0.1.3.
 
 The typeface is a Varinomics derivative of Canonical's Ubuntu Sans Mono v1.100
 and Chris Wendt's Ubuntu Mono - Bront. The byte-verbatim file includes the
 terminal and keyboard symbols added by the derivative project, including the
-directional arrows and Powerline symbols.
+directional arrows and Powerline symbols. All Braille patterns U+2800-U+28FF use
+the same horizontal and vertical dot pitch, including across adjacent character
+cells, while retaining their original dot outlines and nonblank character
+advances. Blank Braille U+2800 uses the same character advance as the other
+patterns.
 
 License: Ubuntu Font Licence 1.0.
 Local license text: `LICENSES/Ubuntu-Font-Licence-1.0.txt`.
@@ -204,12 +208,12 @@ Copyright notice carried in the font:
 Source and provenance:
 
 - https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm
-- Release v0.1.2
-- https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm/releases/download/v0.1.2/UbuntuSansMonoDerivativeVnm-Regular.ttf
+- Locally built derivative version 0.1.3; no published release artifact.
+- Builder `vnm_font.py` SHA-256 2c70c29405be637077ea753748aacd71bd2dea2af2e14bcf667efe9244459a3c
 - https://github.com/canonical/Ubuntu-Sans-Mono-fonts
 - Ubuntu Sans Mono source revision c57353c1772eb8aaab9c539e3d42c971a03a5fcd
 - Bront source revision aef23d9a11416655a8351230edb3c2377061c077
-- Output SHA-256 7c43ef1e20e2fa3d7c7d95805965ee453cc05b3fddc8ea5745c52ecbf07e7e25
+- Output SHA-256 480feabc15036cd2e91aeadabcb6ba7955b478acb8122e6e074c9a42d8c4e98c
 - https://ubuntu.com/legal/font-licence
 
 The output is a locally built static Regular font from the derivative project.

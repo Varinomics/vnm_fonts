@@ -1,10 +1,11 @@
 # vnm_fonts
 
-The fonts Varinomics products ship, byte-verbatim as their authors published
-them, plus the library that isolates their family names where necessary.
+The fonts Varinomics products ship, byte-verbatim from upstream releases and
+owned derivative builds, plus the library that isolates their family names
+where necessary.
 
 ```
-fonts/         the shipped files, byte-identical to upstream
+fonts/         the shipped files, byte-identical to their source outputs
 LICENSES/      the licence text of every upstream family
 THIRD_PARTY/   the provenance manifest for every file
 src/           the library that registers family names at load time (needs Qt)
@@ -190,8 +191,9 @@ consumer that set that variable itself keeps its value.
 ## What the marking does
 
 The files in `fonts/` are byte-verbatim, so nothing this repository
-redistributes differs from what upstream published. Family names that need
-isolation are patched in memory on the way into the font database.
+redistributes differs from the upstream release or owned derivative build it
+records. Family names that need isolation are patched in memory on the way into
+the font database.
 
 | Name ID | Treatment |
 |---|---|
@@ -269,9 +271,11 @@ families, and the consumer gate asserts that count.
 | `JetBrainsMono-Regular.ttf` | JetBrains Mono | `JetBrains Mono (vnm)` |
 | `FiraCode-Regular.ttf` | Fira Code | `Fira Code (vnm)` |
 
-Every file is named after its upstream PostScript name, and
-`THIRD_PARTY/*.toml` records for each one the upstream repository, revision,
-path and URL, its digest and size, and `modifications = "none"`.
+Every file is named after its source PostScript name, and
+`THIRD_PARTY/*.toml` records for each one the source provenance and path, any
+published artifact URL, its digest and size, and `modifications = "none"`.
+The owned Ubuntu Sans Mono derivative also records its local builder identity;
+a local build does not claim a published release URL.
 
 ## The gates
 
