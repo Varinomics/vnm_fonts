@@ -16,19 +16,19 @@ upstream_license_url = "https://raw.githubusercontent.com/chrismwendt/bront/aef2
 upstream_license_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
 
 distribution_repository = "https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm"
-distribution_version = "0.1.3"
+distribution_version = "0.1.4"
 distribution_status = "local build; not a published release"
 distribution_builder_path = "vnm_font.py"
-distribution_builder_sha256 = "2c70c29405be637077ea753748aacd71bd2dea2af2e14bcf667efe9244459a3c"
-source_provenance_note = "The shipped bytes are the locally built static Regular output from the derivative project, with uniformly spaced Braille dots throughout U+2800-U+28FF. The build report identifies the Ubuntu Sans Mono v1.100 source, the Bront source, the Ubuntu Font Licence input and the derivative builder version 0.1.3. No release artifact has been published for this local build."
+distribution_builder_sha256 = "f1cd4da081f1e7d09034e001cfd7bae499774928b7b5bde970f41c8a189f5a14"
+source_provenance_note = "The shipped bytes are the locally built static Regular output from the derivative project, with a 280-unit horizontal Braille dot pitch across adjacent character cells and a 300-unit vertical pitch across adjacent nominal 1200-unit lines throughout U+2800-U+28FF. The build report identifies the Ubuntu Sans Mono v1.100 source, the Bront source, the Ubuntu Font Licence input and the derivative builder version 0.1.4. No release artifact has been published for this local build."
 
 [[artifact]]
 key = "ubuntu-sans-mono-derivative-vnm-regular"
 path = "fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf"
 upstream_family = "Ubuntu Sans Mono derivative vnm"
 style = "Regular"
-version = "Version 1.104; vnm 0.1.3; upstream 1.100"
+version = "Version 1.105; vnm 0.1.4; upstream 1.100"
 source_path = "build/UbuntuSansMonoDerivativeVnm-Regular.ttf"
-sha256 = "480feabc15036cd2e91aeadabcb6ba7955b478acb8122e6e074c9a42d8c4e98c"
+sha256 = "f09f27a795a93bac55cd9f3f6c644d1e8d779ba3546ce184ba062b2d3d84dd0b"
 size = 139428
 modifications = "none"
