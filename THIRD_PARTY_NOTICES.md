@@ -192,7 +192,10 @@ Shipped file:
 The typeface is a Varinomics derivative of Canonical's Ubuntu Sans Mono v1.100
 and Chris Wendt's Ubuntu Mono - Bront. The byte-verbatim file includes the
 terminal and keyboard symbols added by the derivative project, including the
-directional arrows and Powerline symbols. All Braille patterns U+2800-U+28FF use
+directional arrows and Powerline symbols. U+21E7 is a hollow Shift arrow from
+the modified local 0.1.4 builder identified below. Other glyph outlines,
+character advances and line metrics match the preceding 0.1.4 output.
+All Braille patterns U+2800-U+28FF use
 a 280-unit horizontal dot pitch across adjacent character cells and a 300-unit
 vertical pitch across adjacent lines at the unchanged nominal 1200-unit line
 height. The original dot outlines, vertical center and nonblank character
@@ -210,12 +213,12 @@ Copyright notice carried in the font:
 Source and provenance:
 
 - https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm
-- Locally built derivative version 0.1.4; no published release artifact.
-- Builder `vnm_font.py` SHA-256 f1cd4da081f1e7d09034e001cfd7bae499774928b7b5bde970f41c8a189f5a14
+- Locally built from modified derivative builder version 0.1.4; no published release artifact.
+- Builder `vnm_font.py` SHA-256 795fd10a60ab464ffc898895ddcb89c7dcf7ea70d666dc2f1aa50d5e5d31c2a3
 - https://github.com/canonical/Ubuntu-Sans-Mono-fonts
 - Ubuntu Sans Mono source revision c57353c1772eb8aaab9c539e3d42c971a03a5fcd
 - Bront source revision aef23d9a11416655a8351230edb3c2377061c077
-- Output SHA-256 f09f27a795a93bac55cd9f3f6c644d1e8d779ba3546ce184ba062b2d3d84dd0b
+- Output SHA-256 cc571c5874de7b9a6e4ed9d47b16f34603a0f84f9a1a1d317506b6e614d40fa9
 - https://ubuntu.com/legal/font-licence
 
 The output is a locally built static Regular font from the derivative project.

@@ -17,10 +17,10 @@ upstream_license_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883ac
 
 distribution_repository = "https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm"
 distribution_version = "0.1.4"
-distribution_status = "local build; not a published release"
+distribution_status = "local build from modified 0.1.4 builder; not a published release"
 distribution_builder_path = "vnm_font.py"
-distribution_builder_sha256 = "f1cd4da081f1e7d09034e001cfd7bae499774928b7b5bde970f41c8a189f5a14"
-source_provenance_note = "The shipped bytes are the locally built static Regular output from the derivative project, with a 280-unit horizontal Braille dot pitch across adjacent character cells and a 300-unit vertical pitch across adjacent nominal 1200-unit lines throughout U+2800-U+28FF. The build report identifies the Ubuntu Sans Mono v1.100 source, the Bront source, the Ubuntu Font Licence input and the derivative builder version 0.1.4. No release artifact has been published for this local build."
+distribution_builder_sha256 = "795fd10a60ab464ffc898895ddcb89c7dcf7ea70d666dc2f1aa50d5e5d31c2a3"
+source_provenance_note = "The shipped bytes are the locally built static Regular output from the modified 0.1.4 derivative builder identified by its SHA-256 above. U+21E7 uses a hollow Shift arrow; other glyph outlines, character advances and line metrics match the preceding 0.1.4 output. All Braille patterns U+2800-U+28FF retain a 280-unit horizontal dot pitch across adjacent character cells and a 300-unit vertical pitch across adjacent nominal 1200-unit lines. The build report identifies the Ubuntu Sans Mono v1.100 source, the Bront source, the Ubuntu Font Licence input and the derivative builder version 0.1.4. No release artifact has been published for this local build."
 
 [[artifact]]
 key = "ubuntu-sans-mono-derivative-vnm-regular"
@@ -29,6 +29,6 @@ upstream_family = "Ubuntu Sans Mono derivative vnm"
 style = "Regular"
 version = "Version 1.105; vnm 0.1.4; upstream 1.100"
 source_path = "build/UbuntuSansMonoDerivativeVnm-Regular.ttf"
-sha256 = "f09f27a795a93bac55cd9f3f6c644d1e8d779ba3546ce184ba062b2d3d84dd0b"
-size = 139428
+sha256 = "cc571c5874de7b9a6e4ed9d47b16f34603a0f84f9a1a1d317506b6e614d40fa9"
+size = 139444
 modifications = "none"
