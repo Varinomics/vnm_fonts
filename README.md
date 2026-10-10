@@ -46,7 +46,7 @@ verbatim bytes are exactly the failure above. The marking is the point.
 | Contract | What it gives you | Needs Qt |
 |---|---|---|
 | File | `VNM_FONTS_DIRECTORY`, the manifest, the licences | no |
-| Library | `vnm::fonts`, which registers shipped fonts under isolated families | yes |
+| Library | `vnm::fonts`, which registers shipped fonts under isolated families | Qt 6.12 or newer |
 
 `find_package(Qt6 ...)` here is **QUIET, not REQUIRED**, so adding this
 repository to a project on a machine with no Qt configures normally: you get

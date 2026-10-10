@@ -28,7 +28,7 @@ project(vnm_fonts VERSION 1.0.0 LANGUAGES CXX)
 # this REQUIRED breaks every Qt-free consumer's configure, which is why
 # tests/without_qt exists: restoring REQUIRED fails a gate here rather than a
 # CI job on a machine none of us has.
-find_package(Qt6 QUIET COMPONENTS Core Gui)
+find_package(Qt6 6.12 QUIET COMPONENTS Core Gui)
 
 # The supported path for a consumer that needs the file rather than the bytes.
 # Set before the Qt branch, because it is exactly what a Qt-free consumer came
@@ -155,7 +155,7 @@ else()
     # with this line directly above it in the configure log saying why - rather
     # than failing inside a repository it only wanted a file path from.
     message(STATUS
-        "vnm_fonts: Qt6 Core and Gui were not found, so the vnm::fonts library "
+        "vnm_fonts: Qt 6.12 or newer Core and Gui were not found, so the vnm::fonts library "
         "is not defined. VNM_FONTS_DIRECTORY (${VNM_FONTS_DIRECTORY}) and the "
         "manifest are available as usual; link vnm::fonts only where Qt is "
         "present.")
