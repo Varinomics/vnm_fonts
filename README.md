@@ -148,7 +148,7 @@ preserves that exact name instead of appending the process mark.
 
 ### Redistributing the fonts means redistributing the licences
 
-All twelve faces are OFL-1.1, Apache-2.0 or the Ubuntu Font Licence, and every one
+All twelve faces are OFL-1.1 or the Ubuntu Font Licence, and every one
 of those requires the licence and copyright notice to accompany copies. This
 repository installs them, so a consumer that installs gets them:
 

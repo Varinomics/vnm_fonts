@@ -37,7 +37,7 @@ set(VNM_FONTS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fonts
     CACHE PATH "Directory holding the byte-verbatim shipped font files")
 
 # Redistributing these fonts means redistributing their licences: all twelve are
-# OFL-1.1, Apache-2.0 or the Ubuntu Font Licence, and each requires the licence
+# OFL-1.1 or the Ubuntu Font Licence, and each requires the licence
 # and copyright notice to accompany every copy. The obligation travelled here
 # with the fonts, so the install rules do too, and they sit outside the Qt
 # branch because a file-only consumer redistributes the bytes just as much as a

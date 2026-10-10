@@ -22,9 +22,9 @@ touches only the `name` table.
 | Roboto Condensed | `RobotoCondensed-Regular.ttf` | Google Fonts |
 | Roboto Condensed Light | `RobotoCondensed-Light.ttf` | Google Fonts |
 | FontAwesome | `FontAwesome.otf` | Font Awesome 4.7.0 |
-| Font Awesome 7 Brands | `FontAwesome7Brands-Regular.otf` | Font Awesome 7.2.0 |
-| Font Awesome 7 Free | `FontAwesome7Free-Regular.otf` | Font Awesome 7.2.0 |
-| Font Awesome 7 Free Solid | `FontAwesome7Free-Solid.otf` | Font Awesome 7.2.0 |
+| Font Awesome 7 Brands | `FontAwesome7Brands-Regular.otf` | Font Awesome 7.3.1 |
+| Font Awesome 7 Free | `FontAwesome7Free-Regular.otf` | Font Awesome 7.3.1 |
+| Font Awesome 7 Free Solid | `FontAwesome7Free-Solid.otf` | Font Awesome 7.3.1 |
 | Noto Sans Symbols 2 | `NotoSansSymbols2-Regular.ttf` | Noto |
 | JuliaMono | `JuliaMono-Regular.ttf` | JuliaMono |
 | ABeeZee | `ABeeZee-Regular.ttf` | ABeeZee |
@@ -37,22 +37,24 @@ Shipped files:
 - `fonts/RobotoCondensed-Regular.ttf`
 - `fonts/RobotoCondensed-Light.ttf`
 
-Both are Roboto Condensed version 2.137 (2017).
+Both are Roboto Condensed version 3.016 (2026), the release's static hinted
+Regular and Light instances.
 
-License: Apache License 2.0.
-Local license text: `LICENSES/RobotoCondensed-Apache-2.0.txt`.
+License: SIL Open Font License 1.1.
+Local license text: `LICENSES/RobotoCondensed-OFL-1.1.txt`.
 
-Copyright notice carried in the fonts:
+Copyright notice carried in the fonts and license:
 
-- Copyright 2011 Google Inc. All Rights Reserved.
+- Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)
 
 Source:
 
-- https://github.com/google/fonts
-- Revision 55aaf47ca89416e720a2449368943ff87fb6d02a
-- https://raw.githubusercontent.com/google/fonts/55aaf47ca89416e720a2449368943ff87fb6d02a/apache/robotocondensed/RobotoCondensed-Regular.ttf
-- https://raw.githubusercontent.com/google/fonts/55aaf47ca89416e720a2449368943ff87fb6d02a/apache/robotocondensed/RobotoCondensed-Light.ttf
-- https://www.apache.org/licenses/LICENSE-2.0
+- https://github.com/googlefonts/roboto-3-classic
+- Revision 5166f3d07889bf7d3732fb72e09623d7e52f862b
+- https://github.com/googlefonts/roboto-3-classic/releases/download/v3.016/Roboto_v3.016.zip
+- Archive paths: `hinted/static/RobotoCondensed-Regular.ttf` and
+  `hinted/static/RobotoCondensed-Light.ttf`
+- https://raw.githubusercontent.com/googlefonts/roboto-3-classic/5166f3d07889bf7d3732fb72e09623d7e52f862b/OFL.txt
 
 Details in `THIRD_PARTY/roboto_condensed_fonts.toml`.
 
@@ -80,7 +82,7 @@ Source:
 
 Details in `THIRD_PARTY/font_awesome_4_font.toml`.
 
-## Font Awesome 7.2.0
+## Font Awesome 7.3.1
 
 Shipped files:
 
@@ -89,7 +91,7 @@ Shipped files:
 - `fonts/FontAwesome7Free-Solid.otf`
 
 License: SIL Open Font License 1.1.
-Local license text: `LICENSES/FontAwesome-7.2.0-OFL-1.1.txt`, the release's own
+Local license text: `LICENSES/FontAwesome-7.3.1-OFL-1.1.txt`, the release's own
 licence file.
 
 Copyright notice carried in the fonts:
@@ -106,8 +108,8 @@ shipped files themselves are unmodified.
 Source:
 
 - https://github.com/FortAwesome/Font-Awesome
-- Revision 337dd2045d5621ce0f8567c33c256f3dedeed55d
-- https://github.com/FortAwesome/Font-Awesome/releases/download/7.2.0/fontawesome-free-7.2.0-desktop.zip
+- Revision 14c65a3747d0f3b751f15831fc719236aea8729d
+- https://github.com/FortAwesome/Font-Awesome/releases/download/7.3.1/fontawesome-free-7.3.1-desktop.zip
 - https://fontawesome.com/license/free
 
 Details in `THIRD_PARTY/font_awesome_7_fonts.toml`.
