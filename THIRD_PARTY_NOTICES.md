@@ -1,21 +1,13 @@
 # Third-Party Notices
 
-Every font in `fonts/` is a third-party typeface redistributed by Varinomics
-**byte-verbatim**, exactly as its authors published it. Nothing in this
-repository is modified: every record in `THIRD_PARTY/*.toml` says
-`modifications = "none"` and carries the upstream repository, revision, path,
-URL, digest and size, and `tests/test_font_manifest.py` checks each file against
-its record.
+The fonts in `fonts/` are redistributed unchanged from the upstream releases or
+derivative builds identified in `THIRD_PARTY/*.toml`. The manifests record their
+sources, licenses, file digests, and sizes.
 
-Family names that need isolation are patched in memory at load time by
-`src/vnm_font_namespace.cpp`, which appends a mark so the family cannot collide
-with a font the user has installed. Two files declaring one family name merge
-into a single family entry, after which glyph lookup and rasterisation can be
-served from different files and produce systematically wrong glyphs; `README.md`
-records the measured case. The Ubuntu Sans Mono derivative vnm face is the
-deliberate exception because its published family name is already
-derivative-specific. The patch exists only in the running process, and it
-touches only the `name` table.
+The Qt library adjusts family names in memory to distinguish fonts from
+installed families. Shipped files and their embedded copyright and license
+records remain unchanged. Ubuntu Sans Mono derivative vnm retains its published
+family name because it is already derivative-specific.
 
 | Upstream family | File | Upstream project |
 |---|---|---|

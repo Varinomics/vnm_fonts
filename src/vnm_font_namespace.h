@@ -7,7 +7,7 @@
 // family names their authors gave them. A font the user has installed can
 // declare the same name, and two files claiming one family name merge into a
 // single family entry, after which glyph lookup and rasterisation can be served
-// from different files. README.md records the measured case.
+// from different files.
 //
 // The fix lives here rather than in the shipped bytes: the font is patched in
 // memory on the way into QFontDatabase, so nothing this repository
