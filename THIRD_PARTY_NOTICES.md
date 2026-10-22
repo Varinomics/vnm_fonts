@@ -28,9 +28,15 @@ Shipped files:
 
 - `fonts/RobotoCondensed-Regular.ttf`
 - `fonts/RobotoCondensed-Light.ttf`
+- `fonts/msdf/RobotoCondensed-Regular.ttf`
+- `fonts/msdf/RobotoCondensed-Light.ttf`
 
-Both are Roboto Condensed version 3.016 (2026), the release's static hinted
-Regular and Light instances.
+The top-level files are Roboto Condensed version 3.016 (2026), the release's
+static hinted Regular and Light instances. The `msdf/` copies are Varinomics
+derivatives for distance-field rendering: overlapping contours are merged
+using their nonzero fill rule and hinting is removed. Names, character mapping,
+advances, line metrics and layout tables are preserved. The original hinted
+files remain the inputs to ordinary Qt font registration.
 
 License: SIL Open Font License 1.1.
 Local license text: `LICENSES/RobotoCondensed-OFL-1.1.txt`.

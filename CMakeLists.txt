@@ -34,7 +34,7 @@ find_package(Qt6 6.12 QUIET COMPONENTS Core Gui)
 # Set before the Qt branch, because it is exactly what a Qt-free consumer came
 # for. Never FORCE it: a consumer that has already set it means it.
 set(VNM_FONTS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fonts
-    CACHE PATH "Directory holding the byte-verbatim shipped font files")
+    CACHE PATH "Directory holding the shipped font files")
 
 # Redistributing these fonts means redistributing their licences: all twelve are
 # OFL-1.1 or the Ubuntu Font Licence, and each requires the licence

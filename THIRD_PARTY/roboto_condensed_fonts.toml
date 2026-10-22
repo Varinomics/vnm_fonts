@@ -29,6 +29,41 @@ size = 462832
 modifications = "none"
 
 [[artifact]]
+key = "roboto-condensed-regular-msdf"
+path = "fonts/msdf/RobotoCondensed-Regular.ttf"
+upstream_family = "Roboto Condensed"
+style = "Regular"
+version = "Version 3.016; 2026"
+source_path = "hinted/static/RobotoCondensed-Regular.ttf"
+source_url = "https://github.com/googlefonts/roboto-3-classic/releases/download/v3.016/Roboto_v3.016.zip"
+derived_from = "fonts/RobotoCondensed-Regular.ttf"
+derived_from_sha256 = "a272b33e9606ed59dd12b3d19bbf3abd799680cbf8ac148ce602795326337a03"
+generator = "tools/normalize_msdf_fonts.py"
+generator_sha256 = "cdddda944f9c2ed6fed6783a2db30506f7177cc5bc653e7d94cc3200c6840c00"
+generation_tools = "fonttools 4.67.0; skia-pathops 0.9.2"
+sha256 = "570477e35ad57cea6cc26511a9d2b068745de9b908734647697007fb4f7e96fc"
+size = 403772
+modifications = "Nonzero-winding outline overlaps merged; glyph instructions and hinting tables removed. MSDF input only; names, mapping, metrics and layout tables unchanged."
+
+[[artifact]]
+key = "roboto-condensed-light-msdf"
+path = "fonts/msdf/RobotoCondensed-Light.ttf"
+upstream_family = "Roboto Condensed Light"
+upstream_typographic_family = "Roboto Condensed"
+style = "Light"
+version = "Version 3.016; 2026"
+source_path = "hinted/static/RobotoCondensed-Light.ttf"
+source_url = "https://github.com/googlefonts/roboto-3-classic/releases/download/v3.016/Roboto_v3.016.zip"
+derived_from = "fonts/RobotoCondensed-Light.ttf"
+derived_from_sha256 = "96ddf4e4a1a90cdaf760e24ed90243b48c2f62ed565b8d35f6edfc90f0aeaa15"
+generator = "tools/normalize_msdf_fonts.py"
+generator_sha256 = "cdddda944f9c2ed6fed6783a2db30506f7177cc5bc653e7d94cc3200c6840c00"
+generation_tools = "fonttools 4.67.0; skia-pathops 0.9.2"
+sha256 = "1ec9946549be336b685e08debd810d51df8a32b9378efad19fea5315e1252776"
+size = 407012
+modifications = "Nonzero-winding outline overlaps merged; glyph instructions and hinting tables removed. MSDF input only; names, mapping, metrics and layout tables unchanged."
+
+[[artifact]]
 key = "roboto-condensed-light"
 path = "fonts/RobotoCondensed-Light.ttf"
 upstream_family = "Roboto Condensed Light"

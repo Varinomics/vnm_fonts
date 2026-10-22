@@ -20,10 +20,18 @@ Qt library for loading them under distinct family names.
 | JetBrains Mono | `JetBrainsMono-Regular.ttf` |
 | Fira Code | `FiraCode-Regular.ttf` |
 
-The files in [fonts/](fonts/) are unchanged copies of upstream releases or,
+The top-level files in [fonts/](fonts/) are unchanged copies of upstream releases or,
 for Ubuntu Sans Mono derivative vnm, the derivative project's build output.
 [Third-party notices](THIRD_PARTY_NOTICES.md) describe their sources and
 licenses; the [manifests](THIRD_PARTY/) record individual file provenance.
+
+MSDF consumers use the Roboto Condensed copies in `fonts/msdf/`, available as
+`:/vnm_fonts/msdf/RobotoCondensed-Regular.ttf` and
+`:/vnm_fonts/msdf/RobotoCondensed-Light.ttf` through the Qt resources. These
+copies have merged overlapping outlines and no hinting, so distance fields
+follow the filled glyph boundary. Normal Qt font registration retains the
+hinted originals. To regenerate the MSDF copies, install `fonttools` and
+`skia-pathops`, then run `python tools/normalize_msdf_fonts.py`.
 
 ## Using the font files
 

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-# The shipped fonts are byte-verbatim upstream releases, so the gates are the
-# ones that apply to any redistributed third-party file:
+# The manifests identify both upstream files and generated MSDF inputs:
 #
 #   1. Every file in fonts/ matches the digest and size its manifest records,
-#      and its manifest says the file was not modified.
+#      with the source and generator recorded for a modified file.
 #   2. Every file is described by exactly one manifest record, and every record
 #      describes a file that exists.
 #   3. Every licence text carried in LICENSES/ matches its recorded digest.
@@ -72,15 +71,22 @@ def check_artifacts(manifests, failures):
                 failures.append("{}: {} does not match its recorded size".format(
                     key, artifact["path"]))
             if artifact["modifications"] != "none":
-                failures.append(
-                    "{}: modifications is {!r}; the shipped files are byte-verbatim and "
-                    "nothing here may change them".format(key, artifact["modifications"]))
+                for field in ("derived_from", "generator"):
+                    source = artifact.get(field)
+                    digest = artifact.get(field + "_sha256")
+                    if not source or not digest:
+                        failures.append("{}: modified font lacks {} provenance".format(key, field))
+                        continue
+                    source_path = REPOSITORY_ROOT / source
+                    if not source_path.is_file() or sha256_of(source_path) != digest:
+                        failures.append("{}: {} does not match its recorded digest".format(key, source))
 
     for relative_path, keys in sorted(claimed.items()):
         if len(keys) > 1:
             failures.append("{} is claimed by {}".format(relative_path, ", ".join(keys)))
 
-    present = {"fonts/" + path.name for path in FONT_DIRECTORY.iterdir() if path.is_file()}
+    present = {path.relative_to(REPOSITORY_ROOT).as_posix()
+               for path in FONT_DIRECTORY.rglob("*") if path.is_file()}
     for relative_path in sorted(present - set(claimed)):
         failures.append("{} is present but described by no manifest record".format(relative_path))
 
@@ -138,7 +144,7 @@ def main():
         return 1
 
     artifacts = sum(len(manifest["artifact"]) for manifest in manifests.values())
-    print("PASS {} byte-verbatim fonts match their manifests.".format(artifacts))
+    print("PASS {} font files match their manifests.".format(artifacts))
     return 0
 
 
