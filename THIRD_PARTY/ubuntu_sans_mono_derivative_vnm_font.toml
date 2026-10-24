@@ -16,19 +16,20 @@ upstream_license_url = "https://raw.githubusercontent.com/chrismwendt/bront/aef2
 upstream_license_sha256 = "2f0015108d68627bd788d313f529c21ff4da2c2c42a5e1f3883acc83480f9002"
 
 distribution_repository = "https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm"
-distribution_version = "0.1.4"
-distribution_status = "local build from modified 0.1.4 builder; not a published release"
+distribution_version = "0.1.5"
+distribution_status = "local build from 0.1.5 builder; not a published release"
 distribution_builder_path = "vnm_font.py"
-distribution_builder_sha256 = "795fd10a60ab464ffc898895ddcb89c7dcf7ea70d666dc2f1aa50d5e5d31c2a3"
-source_provenance_note = "The shipped bytes are the locally built static Regular output from the modified 0.1.4 derivative builder identified by its SHA-256 above. U+21E7 uses a hollow Shift arrow; other glyph outlines, character advances and line metrics match the preceding 0.1.4 output. All Braille patterns U+2800-U+28FF retain a 280-unit horizontal dot pitch across adjacent character cells and a 300-unit vertical pitch across adjacent nominal 1200-unit lines. The build report identifies the Ubuntu Sans Mono v1.100 source, the Bront source, the Ubuntu Font Licence input and the derivative builder version 0.1.4. No release artifact has been published for this local build."
+distribution_builder_sha256 = "5725ffcef86d84b2b432757b0f56ada5463e482df8b9d7453282a67c6ee4c7c6"
+distribution_fonttools_version = "4.56.0"
+source_provenance_note = "The shipped bytes are the locally built static Regular output from derivative builder 0.1.5 identified by its SHA-256 above. Original procedural outlines add U+2722, U+2733, U+2736, U+273B and U+273D with a 560-unit character advance and cell-contained ink. Existing glyph outlines, character advances and line metrics match the preceding shipped 0.1.4 output. U+21E7 retains its hollow Shift arrow. All Braille patterns U+2800-U+28FF retain a 280-unit horizontal dot pitch across adjacent character cells and a 300-unit vertical pitch across nominal 1200-unit lines. The source inputs and Ubuntu Font Licence are unchanged. No release artifact has been published for this local build."
 
 [[artifact]]
 key = "ubuntu-sans-mono-derivative-vnm-regular"
 path = "fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf"
 upstream_family = "Ubuntu Sans Mono derivative vnm"
 style = "Regular"
-version = "Version 1.105; vnm 0.1.4; upstream 1.100"
+version = "Version 1.106; vnm 0.1.5; upstream 1.100"
 source_path = "build/UbuntuSansMonoDerivativeVnm-Regular.ttf"
-sha256 = "cc571c5874de7b9a6e4ed9d47b16f34603a0f84f9a1a1d317506b6e614d40fa9"
-size = 139444
+sha256 = "86f23c1188625152b280df59a63d870b20d4dcd53295c34eac60c070480ce361"
+size = 140100
 modifications = "none"

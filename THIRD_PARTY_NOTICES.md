@@ -187,14 +187,16 @@ Details in `THIRD_PARTY/abeezee_font.toml`.
 
 Shipped file:
 
-- `fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf`, version 1.105, derivative version 0.1.4.
+- `fonts/UbuntuSansMonoDerivativeVnm-Regular.ttf`, version 1.106, derivative version 0.1.5.
 
 The typeface is a Varinomics derivative of Canonical's Ubuntu Sans Mono v1.100
 and Chris Wendt's Ubuntu Mono - Bront. The byte-verbatim file includes the
 terminal and keyboard symbols added by the derivative project, including the
-directional arrows and Powerline symbols. U+21E7 is a hollow Shift arrow from
-the modified local 0.1.4 builder identified below. Other glyph outlines,
-character advances and line metrics match the preceding 0.1.4 output.
+directional arrows and Powerline symbols. The original procedural activity
+symbols U+2722, U+2733, U+2736, U+273B and U+273D use a 560-unit character
+advance with ink contained inside one cell. U+21E7 retains its hollow Shift
+arrow. Existing glyph outlines, character advances and line metrics match the
+preceding shipped 0.1.4 output.
 All Braille patterns U+2800-U+28FF use
 a 280-unit horizontal dot pitch across adjacent character cells and a 300-unit
 vertical pitch across adjacent lines at the unchanged nominal 1200-unit line
@@ -213,12 +215,12 @@ Copyright notice carried in the font:
 Source and provenance:
 
 - https://github.com/Varinomics/ubuntu-sans-mono-derivative-vnm
-- Locally built from modified derivative builder version 0.1.4; no published release artifact.
-- Builder `vnm_font.py` SHA-256 795fd10a60ab464ffc898895ddcb89c7dcf7ea70d666dc2f1aa50d5e5d31c2a3
+- Locally built from derivative builder version 0.1.5; no published release artifact.
+- Builder `vnm_font.py` SHA-256 5725ffcef86d84b2b432757b0f56ada5463e482df8b9d7453282a67c6ee4c7c6
 - https://github.com/canonical/Ubuntu-Sans-Mono-fonts
 - Ubuntu Sans Mono source revision c57353c1772eb8aaab9c539e3d42c971a03a5fcd
 - Bront source revision aef23d9a11416655a8351230edb3c2377061c077
-- Output SHA-256 cc571c5874de7b9a6e4ed9d47b16f34603a0f84f9a1a1d317506b6e614d40fa9
+- Output SHA-256 86f23c1188625152b280df59a63d870b20d4dcd53295c34eac60c070480ce361
 - https://ubuntu.com/legal/font-licence
 
 The output is a locally built static Regular font from the derivative project.
