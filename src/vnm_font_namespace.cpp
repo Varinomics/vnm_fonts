@@ -147,15 +147,6 @@ quint32 table_checksum(const QByteArray& data)
     return sum;
 }
 
-QByteArray padded_to_four(const QByteArray& data)
-{
-    QByteArray padded = data;
-    while (padded.size() % 4 != 0) {
-        padded.append('\0');
-    }
-    return padded;
-}
-
 bool read_tables(const QByteArray& font_bytes, std::vector<Sfnt_table>* out_tables, QString* out_error)
 {
     if (font_bytes.size() < k_sfnt_header_size) {
@@ -190,7 +181,8 @@ bool read_tables(const QByteArray& font_bytes, std::vector<Sfnt_table>* out_tabl
                              .arg(QString::fromLatin1(table.tag));
             return false;
         }
-        table.data = font_bytes.mid(static_cast<int>(table.offset), static_cast<int>(table.length));
+        // mark_font_family keeps font_bytes alive until the rebuilt font owns every table.
+        table.data = QByteArray::fromRawData(font_bytes.constData() + table.offset, table.length);
         out_tables->push_back(table);
     }
     return true;
@@ -250,13 +242,19 @@ QByteArray write_name_table(const std::vector<Name_record>& records)
 {
     const int record_count = static_cast<int>(records.size());
     const int string_base  = k_name_table_header_size + record_count * k_name_record_size;
+    qsizetype strings_size = 0;
+    for (const Name_record& record : records) {
+        strings_size += record.value.size();
+    }
 
     QByteArray table;
+    table.reserve(string_base + strings_size);
     append_u16(table, 0);
     append_u16(table, static_cast<quint16>(record_count));
     append_u16(table, static_cast<quint16>(string_base));
 
     QByteArray strings;
+    strings.reserve(strings_size);
     for (const Name_record& record : records) {
         append_u16(table, record.platform_id);
         append_u16(table, record.encoding_id);
@@ -283,33 +281,40 @@ QByteArray write_font(const std::vector<Sfnt_table>& tables, quint32 sfnt_versio
     const quint16 search_range = static_cast<quint16>((1 << entry_selector) * 16);
     const quint16 range_shift  = static_cast<quint16>(table_count * 16 - search_range);
 
-    QByteArray header;
-    append_u32(header, sfnt_version);
-    append_u16(header, static_cast<quint16>(table_count));
-    append_u16(header, search_range);
-    append_u16(header, entry_selector);
-    append_u16(header, range_shift);
+    const int body_offset = k_sfnt_header_size + table_count * k_table_directory_entry_size;
+    qsizetype font_size = body_offset;
+    for (const Sfnt_table& table : tables) {
+        const qsizetype padding = (4 - table.data.size() % 4) % 4;
+        font_size += table.data.size() + padding;
+    }
 
-    QByteArray directory;
-    QByteArray body;
-    quint32    offset = static_cast<quint32>(k_sfnt_header_size +
-                                             table_count * k_table_directory_entry_size);
+    QByteArray font;
+    font.reserve(font_size);
+    append_u32(font, sfnt_version);
+    append_u16(font, static_cast<quint16>(table_count));
+    append_u16(font, search_range);
+    append_u16(font, entry_selector);
+    append_u16(font, range_shift);
+
+    quint32 offset = static_cast<quint32>(body_offset);
     *out_head_offset = -1;
     for (const Sfnt_table& table : tables) {
-        const QByteArray padded = padded_to_four(table.data);
+        const qsizetype padding = (4 - table.data.size() % 4) % 4;
         if (table.tag == QByteArrayLiteral("head")) {
             *out_head_offset = static_cast<int>(offset);
         }
 
-        directory.append(table.tag);
-        append_u32(directory, table_checksum(padded));
-        append_u32(directory, offset);
-        append_u32(directory, static_cast<quint32>(table.data.size()));
-
-        body.append(padded);
-        offset += static_cast<quint32>(padded.size());
+        font.append(table.tag);
+        append_u32(font, table_checksum(table.data));
+        append_u32(font, offset);
+        append_u32(font, static_cast<quint32>(table.data.size()));
+        offset += static_cast<quint32>(table.data.size() + padding);
     }
-    return header + directory + body;
+    for (const Sfnt_table& table : tables) {
+        font.append(table.data);
+        font.append((4 - table.data.size() % 4) % 4, '\0');
+    }
+    return font;
 }
 
 // head.checkSumAdjustment must be zero while the table checksums are taken, and
